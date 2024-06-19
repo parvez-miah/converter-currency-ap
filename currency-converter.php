@@ -83,13 +83,21 @@ function cc_convert_currency() {
     $bank_rate = $rate;
     $exchange_rate = $bank_rate * 1.02;
 
+    $currency_names = [
+        'USD' => 'আমেরিকান ডলার',
+        'BDT' => 'বাংলাদেশি টাকা'
+    ];
+
     wp_send_json_success(array(
         'rate' => $rate,
         'converted_amount' => $converted_amount,
         'bank_rate' => $bank_rate,
-        'exchange_rate' => $exchange_rate
+        'exchange_rate' => $exchange_rate,
+        'from_currency_name' => $currency_names[$from_currency],
+        'to_currency_name' => $currency_names[$to_currency]
     ));
 }
+
 add_action('wp_ajax_cc_convert_currency', 'cc_convert_currency');
 add_action('wp_ajax_nopriv_cc_convert_currency', 'cc_convert_currency');
 

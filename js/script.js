@@ -56,12 +56,17 @@ jQuery(document).ready(function ($) {
             response.data.converted_amount
           );
 
+          let fromCurrencyName = response.data.from_currency_name;
+          let toCurrencyName = response.data.to_currency_name;
+
           $("#cc-result").html(
-            fromCurrency +
-              " ১ " +
+            fromCurrencyName +
+              " " +
+              convertToBengali(1) +
+              " " +
               (fromCurrency === "USD" ? "ডলার" : "টাকা") +
               " = " +
-              toCurrency +
+              toCurrencyName +
               " " +
               convertedAmountFormatted
           );
