@@ -27,7 +27,7 @@ function cc_currency_converter($atts) {
 
     ob_start();
     ?>
-     <div class="cc-container">
+    <div class="cc-container">
         <div class="main-div">
             <div>
                 <div class="sub-amount-box">
@@ -75,6 +75,11 @@ function cc_convert_currency() {
     $from_currency = sanitize_text_field($_POST['from_currency']);
     $to_currency = sanitize_text_field($_POST['to_currency']);
     $amount = floatval($_POST['amount']);
+
+    if ($from_currency === $to_currency) {
+        wp_send_json_error('দয়া করে, ভিন্ন কারেন্সি ব্যবহার করুন');
+    }
+
     $cache_key = 'cc_' . $from_currency . '_' . $to_currency;
     $rate = get_transient($cache_key);
 
@@ -160,6 +165,10 @@ function cc_display_shortcodes_page() {
                 <tr>
                     <td>[currency_converter]</td>
                     <td>Display the currency converter.</td>
+                </tr>
+                <tr>
+                    <td>[currency_converter from="usd" to="bdt"]</td>
+                    <td>Display the currency converter with specific currencies.</td>
                 </tr>
             </tbody>
         </table>

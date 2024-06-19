@@ -18,6 +18,11 @@ jQuery(document).ready(function ($) {
     var toCurrency = $("#cc-to-currency").val();
     var amount = $("#cc-amount").val();
 
+    if (fromCurrency === toCurrency) {
+      $("#cc-result").html("দয়া করে, ভিন্ন কারেন্সি ব্যবহার করুন");
+      return;
+    }
+
     $("#cc-loader").show();
 
     $.ajax({
@@ -70,7 +75,15 @@ jQuery(document).ready(function ($) {
               " = " +
               toCurrencyName +
               " " +
-              convertedAmountFormatted
+              convertedAmountFormatted +
+              "<br> এক্সচেঞ্জ রেট: " +
+              fromCurrencyName +
+              " ১ " +
+              (fromCurrency === "USD" ? "ডলার" : "টাকা") +
+              " = " +
+              toCurrencyName +
+              " " +
+              formatBengaliCurrency(response.data.bank_rate * 1.02)
           );
 
           $("#cc-rate-table tbody").html(bankRates);
