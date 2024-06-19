@@ -29,26 +29,26 @@ function cc_currency_converter($atts) {
     ?>
      <div class="cc-container">
         <div class="main-div">
-<div>
-<div class="sub-amount-box">
-                <label for="cc-amount">Amount</label>
-                <input type="number" id="cc-amount" value="1" min="1" />
+            <div>
+                <div class="sub-amount-box">
+                    <label for="cc-amount">Amount</label>
+                    <input type="number" id="cc-amount" value="1" min="1" />
+                </div>
             </div>
-</div>
-           <div class="sub-dropdown-column">
-           <div class="cc-column">
-                <label for="cc-from-currency">From</label>
-                <select id="cc-from-currency">
-                    <?php cc_currency_options($atts['from']); ?>
-                </select>
+            <div class="sub-dropdown-column">
+                <div class="cc-column">
+                    <label for="cc-from-currency">From</label>
+                    <select id="cc-from-currency">
+                        <?php cc_currency_options($atts['from']); ?>
+                    </select>
+                </div>
+                <div class="cc-column">
+                    <label for="cc-to-currency">To</label>
+                    <select id="cc-to-currency">
+                        <?php cc_currency_options($atts['to']); ?>
+                    </select>
+                </div>
             </div>
-            <div class="cc-column">
-                <label for="cc-to-currency">To</label>
-                <select id="cc-to-currency">
-                    <?php cc_currency_options($atts['to']); ?>
-                </select>
-            </div>
-           </div>
         </div>
         <button id="cc-convert">Convert</button>
         <div id="cc-loader" style="display: none;">Loading...</div>
@@ -63,6 +63,7 @@ function cc_currency_converter($atts) {
             </thead>
             <tbody></tbody>
         </table>
+        <div id="cc-additional-info"></div>
     </div>
     <?php
     return ob_get_clean();
