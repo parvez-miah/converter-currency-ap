@@ -18,8 +18,8 @@ jQuery(document).ready(function ($) {
     var toCurrency = $("#cc-to-currency").val();
     var amount = $("#cc-amount").val();
 
-    if (fromCurrency === toCurrency) {
-      $("#cc-result").html("দয়া করে, ভিন্ন কারেন্সি ব্যবহার করুন");
+    if (amount <= 0) {
+      alert("Amount must be greater than zero.");
       return;
     }
 
@@ -27,7 +27,7 @@ jQuery(document).ready(function ($) {
 
     $.ajax({
       url: ccAjax.ajax_url,
-      type: "post",
+      type: "POST",
       data: {
         action: "cc_convert_currency",
         from_currency: fromCurrency,
@@ -75,15 +75,7 @@ jQuery(document).ready(function ($) {
               " = " +
               toCurrencyName +
               " " +
-              convertedAmountFormatted +
-              "<br> এক্সচেঞ্জ রেট: " +
-              fromCurrencyName +
-              " ১ " +
-              (fromCurrency === "USD" ? "ডলার" : "টাকা") +
-              " = " +
-              toCurrencyName +
-              " " +
-              formatBengaliCurrency(response.data.bank_rate * 1.02)
+              convertedAmountFormatted
           );
 
           $("#cc-rate-table tbody").html(bankRates);
@@ -104,6 +96,48 @@ jQuery(document).ready(function ($) {
           `;
 
           $("#cc-additional-info").html(additionalInfo);
+
+          // Reverse conversion info
+          const reverseRateFormatted = formatBengaliCurrency(
+            response.data.reverse_rate
+          );
+          const reverseConvertedAmountFormatted = formatBengaliCurrency(
+            response.data.reverse_converted_amount
+          );
+
+          $("#cc-additional-info").append(`
+            <h2>রিভার্স কনভার্সন</h2>
+            <p>${toCurrencyName} থেকে ${fromCurrencyName}:</p>
+            <p>১ ${toCurrencyName} = ${reverseRateFormatted} ${fromCurrencyName}</p>
+            <p>${convertToBengali(
+              amount
+            )} ${toCurrencyName} = ${reverseConvertedAmountFormatted} ${fromCurrencyName}</p>
+          `);
+
+          // Stats table update
+          $("#cc-stats-7days").html(
+            formatBengaliCurrency(response.data.historical_rates["7days"])
+          );
+          $("#cc-stats-15days").html(
+            formatBengaliCurrency(response.data.historical_rates["15days"])
+          );
+          $("#cc-stats-30days").html(
+            formatBengaliCurrency(response.data.historical_rates["30days"])
+          );
+
+          // Historical graph update (simplified)
+          const graphHtml7days = `
+            <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=7d" alt="Graph for last 7 days" />
+          `;
+          const graphHtml1month = `
+            <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=1m" alt="Graph for last month" />
+          `;
+          const graphHtml1year = `
+            <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=1y" alt="Graph for last year" />
+          `;
+          $("#graph-7days").html(graphHtml7days);
+          $("#graph-1month").html(graphHtml1month);
+          $("#graph-1year").html(graphHtml1year);
         } else {
           $("#cc-result").html("Error: " + response.data);
         }
@@ -115,8 +149,16 @@ jQuery(document).ready(function ($) {
     });
   }
 
+  function reverseCurrencies() {
+    const fromCurrency = $("#cc-from-currency").val();
+    const toCurrency = $("#cc-to-currency").val();
+    $("#cc-from-currency").val(toCurrency).change();
+    $("#cc-to-currency").val(fromCurrency).change();
+  }
+
   $("#cc-amount, #cc-from-currency, #cc-to-currency").change(updateConversion);
   $("#cc-convert").click(updateConversion);
+  $("#cc-reverse").click(reverseCurrencies);
 
   // Initial conversion on load
   updateConversion();

@@ -48,6 +48,9 @@ function cc_currency_converter($atts) {
                         <?php cc_currency_options($atts['to']); ?>
                     </select>
                 </div>
+                <div class="cc-column">
+                    <button id="cc-reverse">⇄</button>
+                </div>
             </div>
         </div>
         <button id="cc-convert">Convert</button>
@@ -64,6 +67,28 @@ function cc_currency_converter($atts) {
             <tbody></tbody>
         </table>
         <div id="cc-additional-info"></div>
+        <div id="cc-historical-graph">
+            <h3>Currency Graph</h3>
+            <div id="graph-7days"><h4>Last 7 Days</h4></div>
+            <div id="graph-1month"><h4>Last Month</h4></div>
+            <div id="graph-1year"><h4>Last Year</h4></div>
+        </div>
+        <div id="cc-stats-table">
+            <h3>স্ট্যাটস</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>সময়কাল</th>
+                        <th>রেট</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>শেষ ৭ দিন</td><td id="cc-stats-7days"></td></tr>
+                    <tr><td>শেষ ১৫ দিন</td><td id="cc-stats-15days"></td></tr>
+                    <tr><td>শেষ ৩০ দিন</td><td id="cc-stats-30days"></td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <?php
     return ob_get_clean();
@@ -77,7 +102,7 @@ function cc_convert_currency() {
     $amount = floatval($_POST['amount']);
 
     if ($from_currency === $to_currency) {
-        wp_send_json_error('দয়া করে, ভিন্ন কারেন্সি ব্যবহার করুন');
+        wp_send_json_error('Please select different currencies for conversion.');
     }
 
     $cache_key = 'cc_' . $from_currency . '_' . $to_currency;
@@ -102,6 +127,16 @@ function cc_convert_currency() {
     $bank_rate = $rate;
     $exchange_rate = $bank_rate * 1.02;
 
+    $reverse_rate = 1 / $rate;
+    $reverse_converted_amount = $amount * $reverse_rate;
+
+    // Fetch historical rates (simplified)
+    $historical_rates = [
+        '7days' => $rate * 0.98, // Simulated values
+        '15days' => $rate * 0.97,
+        '30days' => $rate * 0.95
+    ];
+
     $currency_names = [
         'USD' => 'আমেরিকান ডলার',
         'BDT' => 'বাংলাদেশি টাকা'
@@ -113,7 +148,10 @@ function cc_convert_currency() {
         'bank_rate' => $bank_rate,
         'exchange_rate' => $exchange_rate,
         'from_currency_name' => $currency_names[$from_currency],
-        'to_currency_name' => $currency_names[$to_currency]
+        'to_currency_name' => $currency_names[$to_currency],
+        'reverse_rate' => $reverse_rate,
+        'reverse_converted_amount' => $reverse_converted_amount,
+        'historical_rates' => $historical_rates
     ));
 }
 
