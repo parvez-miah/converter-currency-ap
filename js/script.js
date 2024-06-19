@@ -17,6 +17,8 @@ jQuery(document).ready(function ($) {
     var fromCurrency = $("#cc-from-currency").val();
     var toCurrency = $("#cc-to-currency").val();
     var amount = $("#cc-amount").val();
+    var date = $("#cc-date").val();
+    var previewRate = $("#cc-preview-rate").val();
 
     if (amount <= 0) {
       alert("Amount must be greater than zero.");
@@ -33,6 +35,8 @@ jQuery(document).ready(function ($) {
         from_currency: fromCurrency,
         to_currency: toCurrency,
         amount: amount,
+        date: date,
+        preview_rate: previewRate,
       },
       success: function (response) {
         $("#cc-loader").hide();
@@ -80,24 +84,22 @@ jQuery(document).ready(function ($) {
 
           $("#cc-rate-table tbody").html(bankRates);
 
-          // Update additional information paragraph
           const additionalInfo = `
-            <p>এখান থেকে আপনি জেনে নিতে পারবেন, ${fromCurrencyName} থেকে ${toCurrencyName} রূপান্তর করার পরিবর্তে আপনি কত টাকা পেতে পারেন সেই সংক্রান্ত যাবতীয় তথ্য। অর্থাৎ আজকের টাকার রেট হিসেবে আপনি জেনে নিতে পারবেন, ${fromCurrencyName} থেকে ${toCurrencyName} সংক্রান্ত যাবতীয় তথ্য।</p>
-            <p>সেজন্য আপনি যদি এই সংক্রান্ত যাবতীয় তথ্য জেনে নিতে চান এবং একই সাথে আজকের টাকার রেট সংক্রান্ত তথ্য জেনে নিতে চান তাহলে সেটি এখান থেকে জেনে নিতে পারেন।</p>
-            <h2>${fromCurrencyName} থেকে ${toCurrencyName} ক্ষেত্রে, আজকের টাকার মান কত সেটা নিয়ে কিছু প্রশ্ন উত্তর?</h2>
-            <h3>আজকের ${fromCurrencyName} থেকে ${toCurrencyName} টাকার রেট কত?</h3>
-            <h3> ১ ${fromCurrencyName} সমান কত ${toCurrencyName}?</h3>
-            <p>১ ${fromCurrencyName} সমান হবে, ${convertedAmountFormatted} ${toCurrencyName}।</p>
-             <h3>৫ ${fromCurrencyName} সমান কত ${toCurrencyName} হবে? </h3>
-            <p> ৫ ${fromCurrencyName} সমান হবে ${formatBengaliCurrency(
+                      <p>এখান থেকে আপনি জেনে নিতে পারবেন, ${fromCurrencyName} থেকে ${toCurrencyName} রূপান্তর করার পরিবর্তে আপনি কত টাকা পেতে পারেন সেই সংক্রান্ত যাবতীয় তথ্য। অর্থাৎ আজকের টাকার রেট হিসেবে আপনি জেনে নিতে পারবেন, ${fromCurrencyName} থেকে ${toCurrencyName} সংক্রান্ত যাবতীয় তথ্য।</p>
+                      <p>সেজন্য আপনি যদি এই সংক্রান্ত যাবতীয় তথ্য জেনে নিতে চান এবং একই সাথে আজকের টাকার রেট সংক্রান্ত তথ্য জেনে নিতে চান তাহলে সেটি এখান থেকে জেনে নিতে পারেন।</p>
+                      <h2>${fromCurrencyName} থেকে ${toCurrencyName} ক্ষেত্রে, আজকের টাকার মান কত সেটা নিয়ে কিছু প্রশ্ন উত্তর?</h2>
+                      <h3>আজকের ${fromCurrencyName} থেকে ${toCurrencyName} টাকার রেট কত?</h3>
+                      <h3> ১ ${fromCurrencyName} সমান কত ${toCurrencyName}?</h3>
+                      <p>১ ${fromCurrencyName} সমান হবে, ${convertedAmountFormatted} ${toCurrencyName}।</p>
+                       <h3>৫ ${fromCurrencyName} সমান কত ${toCurrencyName} হবে? </h3>
+                      <p> ৫ ${fromCurrencyName} সমান হবে ${formatBengaliCurrency(
             response.data.converted_amount * 5
           )} ${toCurrencyName}।</p>
-            <p>একেবারে সর্বশেষ আপডেট অনুযায়ী এখানে বিস্তারিত আলোচনা করা হয়েছে, আজকের টাকা রেট হিসেবে, ${fromCurrencyName} থেকে ${toCurrencyName} ক্ষেত্রে আজকে টাকা রেট কত টাকা হবে সেই সংক্রান্ত তথ্য।</p>
-          `;
+                      <p>একেবারে সর্বশেষ আপডেট অনুযায়ী এখানে বিস্তারিত আলোচনা করা হয়েছে, আজকের টাকা রেট হিসেবে, ${fromCurrencyName} থেকে ${toCurrencyName} ক্ষেত্রে আজকে টাকা রেট কত টাকা হবে সেই সংক্রান্ত তথ্য।</p>
+                  `;
 
           $("#cc-additional-info").html(additionalInfo);
 
-          // Reverse conversion info
           const reverseRateFormatted = formatBengaliCurrency(
             response.data.reverse_rate
           );
@@ -106,15 +108,14 @@ jQuery(document).ready(function ($) {
           );
 
           $("#cc-additional-info").append(`
-            <h2>রিভার্স কনভার্সন</h2>
-            <p>${toCurrencyName} থেকে ${fromCurrencyName}:</p>
-            <p>১ ${toCurrencyName} = ${reverseRateFormatted} ${fromCurrencyName}</p>
-            <p>${convertToBengali(
-              amount
-            )} ${toCurrencyName} = ${reverseConvertedAmountFormatted} ${fromCurrencyName}</p>
-          `);
+                      <h2>রিভার্স কনভার্সন</h2>
+                      <p>${toCurrencyName} থেকে ${fromCurrencyName}:</p>
+                      <p>১ ${toCurrencyName} = ${reverseRateFormatted} ${fromCurrencyName}</p>
+                      <p>${convertToBengali(
+                        amount
+                      )} ${toCurrencyName} = ${reverseConvertedAmountFormatted} ${fromCurrencyName}</p>
+                  `);
 
-          // Stats table update
           $("#cc-stats-7days").html(
             formatBengaliCurrency(response.data.historical_rates["7days"])
           );
@@ -125,21 +126,19 @@ jQuery(document).ready(function ($) {
             formatBengaliCurrency(response.data.historical_rates["30days"])
           );
 
-          // Historical graph update
           const graphHtml7days = `
-            <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=7d" alt="Graph for last 7 days" />
-          `;
+                      <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=7d" alt="Graph for last 7 days" />
+                  `;
           const graphHtml1month = `
-            <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=1m" alt="Graph for last month" />
-          `;
+                      <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=1m" alt="Graph for last month" />
+                  `;
           const graphHtml1year = `
-            <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=1y" alt="Graph for last year" />
-          `;
+                      <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=1y" alt="Graph for last year" />
+                  `;
           $("#graph-7days").html(graphHtml7days);
           $("#graph-1month").html(graphHtml1month);
           $("#graph-1year").html(graphHtml1year);
 
-          // Show exchange rate with 2% increase
           const increasedRate = formatBengaliCurrency(
             response.data.exchange_rate
           );
@@ -165,10 +164,15 @@ jQuery(document).ready(function ($) {
     $("#cc-loader").show();
   }
 
-  $("#cc-amount, #cc-from-currency, #cc-to-currency").change(updateConversion);
+  $(
+    "#cc-amount, #cc-from-currency, #cc-to-currency, #cc-date, #cc-preview-rate"
+  ).change(updateConversion);
   $("#cc-convert").click(updateConversion);
   $("#cc-reverse").click(reverseCurrencies);
 
-  // Initial conversion on load
+  $("#cc-print").click(function () {
+    window.print();
+  });
+
   updateConversion();
 });

@@ -13,6 +13,7 @@ if (!defined('ABSPATH')) {
 // Enqueue necessary scripts and styles
 function cc_enqueue_scripts() {
     wp_enqueue_style('cc-styles', plugins_url('css/style.css', __FILE__));
+    wp_enqueue_style('cc-print-styles', plugins_url('css/print.css', __FILE__), array(), null, 'print');
     wp_enqueue_script('cc-scripts', plugins_url('js/script.js', __FILE__), array('jquery'), null, true);
     wp_localize_script('cc-scripts', 'ccAjax', array('ajax_url' => admin_url('admin-ajax.php')));
 }
@@ -51,12 +52,30 @@ function cc_currency_converter($atts) {
                 <div class="cc-column">
                     <button id="cc-reverse">⇄</button>
                 </div>
+                <div class="cc-column">
+                    <label for="cc-date">Date</label>
+                    <input type="date" id="cc-date" />
+                </div>
+                <div class="cc-column">
+                    <label for="cc-preview-rate">Preview Interbank Rate</label>
+                    <select id="cc-preview-rate">
+                        <option value="0">0%</option>
+                        <option value="1">+1%</option>
+                        <option value="-1">-1%</option>
+                        <option value="2">+2%</option>
+                        <option value="-2">-2%</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                </div>
             </div>
         </div>
         <button id="cc-convert">Convert</button>
+        <button id="cc-print">Print</button>
         <div id="cc-loader" style="display: none;">Loading...</div>
-        <div id="cc-result"></div>
+        <div class="rate-showing">
+            <div id="cc-result"></div>
         <div id="cc-increased-rate"></div>
+        </div>
         <table id="cc-rate-table">
             <thead>
                 <tr>
@@ -95,16 +114,18 @@ function cc_convert_currency() {
     $from_currency = sanitize_text_field($_POST['from_currency']);
     $to_currency = sanitize_text_field($_POST['to_currency']);
     $amount = floatval($_POST['amount']);
+    $date = sanitize_text_field($_POST['date']);
+    $preview_rate = floatval($_POST['preview_rate']);
 
     if ($from_currency === $to_currency) {
         wp_send_json_error('টাকার রেট আপডেট হয়েছে নিচে দেখুন।');
     }
 
-    $cache_key = 'cc_' . $from_currency . '_' . $to_currency;
+    $cache_key = 'cc_' . $from_currency . '_' . $to_currency . '_' . $date;
     $rate = get_transient($cache_key);
 
     if ($rate === false) {
-        $response = wp_remote_get("https://www.google.com/finance/quote/{$from_currency}-{$to_currency}");
+        $response = wp_remote_get("https://www.google.com/finance/quote/{$from_currency}-{$to_currency}?date={$date}");
         if (is_wp_error($response)) {
             wp_send_json_error('Unable to fetch conversion rate');
         }
@@ -118,16 +139,16 @@ function cc_convert_currency() {
         }
     }
 
-    $converted_amount = $amount * $rate;
-    $bank_rate = $rate;
+    $adjusted_rate = $rate * (1 + $preview_rate / 100);
+    $converted_amount = $amount * $adjusted_rate;
+    $bank_rate = $adjusted_rate;
     $exchange_rate = $bank_rate * 1.02;
 
     $reverse_rate = 1 / $rate;
     $reverse_converted_amount = $amount * $reverse_rate;
 
-    // Fetch historical rates (simplified)
     $historical_rates = [
-        '7days' => $rate * 0.98, // Simulated values
+        '7days' => $rate * 0.98, 
         '15days' => $rate * 0.97,
         '30days' => $rate * 0.95
     ];
@@ -139,6 +160,7 @@ function cc_convert_currency() {
 
     wp_send_json_success(array(
         'rate' => $rate,
+        'adjusted_rate' => $adjusted_rate,
         'converted_amount' => $converted_amount,
         'bank_rate' => $bank_rate,
         'exchange_rate' => $exchange_rate,
