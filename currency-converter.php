@@ -67,14 +67,8 @@ function cc_currency_converter($atts) {
             <tbody></tbody>
         </table>
         <div id="cc-additional-info"></div>
-        <div id="cc-historical-graph">
-            <h3>Currency Graph</h3>
-            <div id="graph-7days"><h4>Last 7 Days</h4></div>
-            <div id="graph-1month"><h4>Last Month</h4></div>
-            <div id="graph-1year"><h4>Last Year</h4></div>
-        </div>
         <div id="cc-stats-table">
-            <h3>স্ট্যাটস</h3>
+            <h3>গত কিছুদিনের আজকের টাকার রেট</h3>
             <table>
                 <thead>
                     <tr>
@@ -102,7 +96,7 @@ function cc_convert_currency() {
     $amount = floatval($_POST['amount']);
 
     if ($from_currency === $to_currency) {
-        wp_send_json_error('Please select different currencies for conversion.');
+        wp_send_json_error('টাকার রেট আপডেট হয়েছে নিচে দেখুন।');
     }
 
     $cache_key = 'cc_' . $from_currency . '_' . $to_currency;
@@ -212,5 +206,8 @@ function cc_display_shortcodes_page() {
         </table>
     </div>
     <?php
+
+    
 }
 ?>
+
