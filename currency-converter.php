@@ -35,7 +35,10 @@ function cc_currency_converter($atts) {
         <select id="cc-to-currency">
             <?php cc_currency_options($atts['to']); ?>
         </select>
+        <br>
         <button id="cc-convert">Convert</button>
+        <br>
+        <div id="cc-loader" style="display: none;">Loading...</div>
         <div id="cc-result"></div>
         <table id="cc-rate-table">
             <thead>
@@ -94,10 +97,26 @@ add_action('wp_ajax_nopriv_cc_convert_currency', 'cc_convert_currency');
 function cc_create_js_file() {
     $js = <<<JS
 jQuery(document).ready(function($) {
+    function convertToBengali(num) {
+        const bengaliNums = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        return num.toString().replace(/[0-9]/g, function(w) {
+            return bengaliNums[+w];
+        });
+    }
+
+    function formatBengaliCurrency(amount) {
+        const parts = amount.toFixed(2).split('.');
+        const taka = convertToBengali(parts[0]);
+        const poisa = convertToBengali(parts[1]);
+        return taka + ' টাকা ' + poisa + ' পয়সা';
+    }
+
     function updateConversion() {
         var fromCurrency = $('#cc-from-currency').val();
         var toCurrency = $('#cc-to-currency').val();
         var amount = $('#cc-amount').val();
+        
+        $('#cc-loader').show();
 
         $.ajax({
             url: ccAjax.ajax_url,
@@ -109,22 +128,27 @@ jQuery(document).ready(function($) {
                 amount: amount
             },
             success: function(response) {
+                $('#cc-loader').hide();
                 if (response.success) {
                     var bankRates = '';
-                    var exchangeRates = '';
                     var quantities = [1, 5, 20, 50, 100];
 
                     quantities.forEach(function(quantity) {
-                        bankRates += '<tr><td>' + quantity + '</td><td>' + (response.data.bank_rate * quantity).toFixed(2) + '</td><td>' + (response.data.exchange_rate * quantity).toFixed(2) + '</td></tr>';
+                        const bankRateFormatted = formatBengaliCurrency(response.data.bank_rate * quantity);
+                        const exchangeRateFormatted = formatBengaliCurrency(response.data.exchange_rate * quantity);
+                        bankRates += '<tr><td>' + convertToBengali(quantity) + '</td><td>' + bankRateFormatted + '</td><td>' + exchangeRateFormatted + '</td></tr>';
                     });
 
-                    $('#cc-result').html(fromCurrency + ' ১ টাকা ' + toCurrency + ' ' + response.data.converted_amount.toFixed(2) + ' টাকা');
+                    const convertedAmountFormatted = formatBengaliCurrency(response.data.converted_amount);
+
+                    $('#cc-result').html(fromCurrency + ' ১ টাকা = ' + toCurrency + ' ' + convertedAmountFormatted);
                     $('#cc-rate-table tbody').html(bankRates);
                 } else {
                     $('#cc-result').html('Error: ' + response.data);
                 }
             },
             error: function() {
+                $('#cc-loader').hide();
                 $('#cc-result').html('An error occurred');
             }
         });
@@ -149,6 +173,10 @@ function cc_create_css_file() {
     margin: 20px;
 }
 #cc-result {
+    margin-top: 10px;
+}
+#cc-loader {
+    display: none;
     margin-top: 10px;
 }
 #cc-rate-table {
@@ -184,3 +212,4 @@ function cc_currency_options($selected = '') {
         echo '<option value="' . $code . '"' . selected($selected, $code, false) . '>' . $name . '</option>';
     }
 }
+?>

@@ -1,8 +1,24 @@
 jQuery(document).ready(function ($) {
+  function convertToBengali(num) {
+    const bengaliNums = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+    return num.toString().replace(/[0-9]/g, function (w) {
+      return bengaliNums[+w];
+    });
+  }
+
+  function formatBengaliCurrency(amount) {
+    const parts = amount.toFixed(2).split(".");
+    const taka = convertToBengali(parts[0]);
+    const poisa = convertToBengali(parts[1]);
+    return taka + " টাকা " + poisa + " পয়সা";
+  }
+
   function updateConversion() {
     var fromCurrency = $("#cc-from-currency").val();
     var toCurrency = $("#cc-to-currency").val();
     var amount = $("#cc-amount").val();
+
+    $("#cc-loader").show();
 
     $.ajax({
       url: ccAjax.ajax_url,
@@ -14,28 +30,38 @@ jQuery(document).ready(function ($) {
         amount: amount,
       },
       success: function (response) {
+        $("#cc-loader").hide();
         if (response.success) {
           var bankRates = "";
           var quantities = [1, 5, 20, 50, 100];
 
           quantities.forEach(function (quantity) {
+            const bankRateFormatted = formatBengaliCurrency(
+              response.data.bank_rate * quantity
+            );
+            const exchangeRateFormatted = formatBengaliCurrency(
+              response.data.exchange_rate * quantity
+            );
             bankRates +=
               "<tr><td>" +
-              quantity +
+              convertToBengali(quantity) +
               "</td><td>" +
-              (response.data.bank_rate * quantity).toFixed(2) +
+              bankRateFormatted +
               "</td><td>" +
-              (response.data.exchange_rate * quantity).toFixed(2) +
+              exchangeRateFormatted +
               "</td></tr>";
           });
 
+          const convertedAmountFormatted = formatBengaliCurrency(
+            response.data.converted_amount
+          );
+
           $("#cc-result").html(
             fromCurrency +
-              " ১ টাকা " +
+              " ১ টাকা = " +
               toCurrency +
               " " +
-              response.data.converted_amount.toFixed(2) +
-              " টাকা"
+              convertedAmountFormatted
           );
           $("#cc-rate-table tbody").html(bankRates);
         } else {
@@ -43,6 +69,7 @@ jQuery(document).ready(function ($) {
         }
       },
       error: function () {
+        $("#cc-loader").hide();
         $("#cc-result").html("An error occurred");
       },
     });
