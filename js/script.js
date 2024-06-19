@@ -58,7 +58,9 @@ jQuery(document).ready(function ($) {
 
           $("#cc-result").html(
             fromCurrency +
-              " ১ টাকা = " +
+              " ১ " +
+              (fromCurrency === "USD" ? "ডলার" : "টাকা") +
+              " = " +
               toCurrency +
               " " +
               convertedAmountFormatted

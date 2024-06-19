@@ -141,7 +141,7 @@ jQuery(document).ready(function($) {
 
                     const convertedAmountFormatted = formatBengaliCurrency(response.data.converted_amount);
 
-                    $('#cc-result').html(fromCurrency + ' ১ টাকা = ' + toCurrency + ' ' + convertedAmountFormatted);
+                    $('#cc-result').html(fromCurrency + ' ১ = ' + toCurrency + ' ' + convertedAmountFormatted);
                     $('#cc-rate-table tbody').html(bankRates);
                 } else {
                     $('#cc-result').html('Error: ' + response.data);
@@ -200,8 +200,8 @@ register_activation_hook(__FILE__, 'cc_create_css_file');
 // Add available currencies (example: dynamic dropdown)
 function cc_get_currencies() {
     return [
-        'USD' => 'USD',
-        'BDT' => 'BDT',
+        'USD' => 'আমেরিকান ডলার',
+        'BDT' => 'বাংলাদেশি টাকা',
         // Add other currencies here
     ];
 }
