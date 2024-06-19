@@ -56,6 +56,7 @@ function cc_currency_converter($atts) {
         <button id="cc-convert">Convert</button>
         <div id="cc-loader" style="display: none;">Loading...</div>
         <div id="cc-result"></div>
+        <div id="cc-increased-rate"></div>
         <table id="cc-rate-table">
             <thead>
                 <tr>
@@ -206,8 +207,5 @@ function cc_display_shortcodes_page() {
         </table>
     </div>
     <?php
-
-    
 }
 ?>
-

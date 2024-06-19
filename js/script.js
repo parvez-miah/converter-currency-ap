@@ -125,7 +125,7 @@ jQuery(document).ready(function ($) {
             formatBengaliCurrency(response.data.historical_rates["30days"])
           );
 
-          // Historical graph update (simplified)
+          // Historical graph update
           const graphHtml7days = `
             <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=7d" alt="Graph for last 7 days" />
           `;
@@ -138,6 +138,14 @@ jQuery(document).ready(function ($) {
           $("#graph-7days").html(graphHtml7days);
           $("#graph-1month").html(graphHtml1month);
           $("#graph-1year").html(graphHtml1year);
+
+          // Show exchange rate with 2% increase
+          const increasedRate = formatBengaliCurrency(
+            response.data.exchange_rate
+          );
+          $("#cc-increased-rate").html(
+            `এক্সচেঞ্জ রেট : ${fromCurrencyName} ১ ডলার = ${toCurrencyName} ${increasedRate}`
+          );
         } else {
           $("#cc-result").html("Error: " + response.data);
         }
@@ -154,6 +162,7 @@ jQuery(document).ready(function ($) {
     const toCurrency = $("#cc-to-currency").val();
     $("#cc-from-currency").val(toCurrency).change();
     $("#cc-to-currency").val(fromCurrency).change();
+    $("#cc-loader").show();
   }
 
   $("#cc-amount, #cc-from-currency, #cc-to-currency").change(updateConversion);
