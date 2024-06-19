@@ -45,6 +45,8 @@ jQuery(document).ready(function ($) {
             bankRates +=
               "<tr><td>" +
               convertToBengali(quantity) +
+              " " +
+              response.data.from_currency_name +
               "</td><td>" +
               bankRateFormatted +
               "</td><td>" +
@@ -62,7 +64,7 @@ jQuery(document).ready(function ($) {
           $("#cc-result").html(
             fromCurrencyName +
               " " +
-              convertToBengali(1) +
+              convertToBengali(amount) +
               " " +
               (fromCurrency === "USD" ? "ডলার" : "টাকা") +
               " = " +

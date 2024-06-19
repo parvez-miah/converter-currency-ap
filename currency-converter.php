@@ -114,110 +114,6 @@ function cc_convert_currency() {
 add_action('wp_ajax_cc_convert_currency', 'cc_convert_currency');
 add_action('wp_ajax_nopriv_cc_convert_currency', 'cc_convert_currency');
 
-// Create JavaScript File
-function cc_create_js_file() {
-    $js = <<<JS
-jQuery(document).ready(function($) {
-    function convertToBengali(num) {
-        const bengaliNums = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-        return num.toString().replace(/[0-9]/g, function(w) {
-            return bengaliNums[+w];
-        });
-    }
-
-    function formatBengaliCurrency(amount) {
-        const parts = amount.toFixed(2).split('.');
-        const taka = convertToBengali(parts[0]);
-        const poisa = convertToBengali(parts[1]);
-        return taka + ' টাকা ' + poisa + ' পয়সা';
-    }
-
-    function updateConversion() {
-        var fromCurrency = $('#cc-from-currency').val();
-        var toCurrency = $('#cc-to-currency').val();
-        var amount = $('#cc-amount').val();
-        
-        $('#cc-loader').show();
-
-        $.ajax({
-            url: ccAjax.ajax_url,
-            type: 'post',
-            data: {
-                action: 'cc_convert_currency',
-                from_currency: fromCurrency,
-                to_currency: toCurrency,
-                amount: amount
-            },
-            success: function(response) {
-                $('#cc-loader').hide();
-                if (response.success) {
-                    var bankRates = '';
-                    var quantities = [1, 5, 20, 50, 100];
-
-                    quantities.forEach(function(quantity) {
-                        const bankRateFormatted = formatBengaliCurrency(response.data.bank_rate * quantity);
-                        const exchangeRateFormatted = formatBengaliCurrency(response.data.exchange_rate * quantity);
-                        bankRates += '<tr><td>' + convertToBengali(quantity) + '</td><td>' + bankRateFormatted + '</td><td>' + exchangeRateFormatted + '</td></tr>';
-                    });
-
-                    const convertedAmountFormatted = formatBengaliCurrency(response.data.converted_amount);
-
-                    $('#cc-result').html(fromCurrency + ' ১ = ' + toCurrency + ' ' + convertedAmountFormatted);
-                    $('#cc-rate-table tbody').html(bankRates);
-                } else {
-                    $('#cc-result').html('Error: ' + response.data);
-                }
-            },
-            error: function() {
-                $('#cc-loader').hide();
-                $('#cc-result').html('An error occurred');
-            }
-        });
-    }
-
-    $('#cc-amount, #cc-from-currency, #cc-to-currency').change(updateConversion);
-    $('#cc-convert').click(updateConversion);
-
-    // Initial conversion on load
-    updateConversion();
-});
-JS;
-
-    file_put_contents(plugin_dir_path(__FILE__) . 'js/script.js', $js);
-}
-register_activation_hook(__FILE__, 'cc_create_js_file');
-
-// Create CSS File
-function cc_create_css_file() {
-    $css = <<<CSS
-.cc-container {
-    margin: 20px;
-}
-#cc-result {
-    margin-top: 10px;
-}
-#cc-loader {
-    display: none;
-    margin-top: 10px;
-}
-#cc-rate-table {
-    margin-top: 20px;
-    width: 100%;
-    border-collapse: collapse;
-}
-#cc-rate-table th, #cc-rate-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-#cc-rate-table th {
-    background-color: #f2f2f2;
-}
-CSS;
-
-    file_put_contents(plugin_dir_path(__FILE__) . 'css/style.css', $css);
-}
-register_activation_hook(__FILE__, 'cc_create_css_file');
-
 // Add available currencies (example: dynamic dropdown)
 function cc_get_currencies() {
     return [
@@ -232,5 +128,41 @@ function cc_currency_options($selected = '') {
     foreach ($currencies as $code => $name) {
         echo '<option value="' . $code . '"' . selected($selected, $code, false) . '>' . $name . '</option>';
     }
+}
+
+// Add "Shortcodes" menu item
+function cc_register_shortcodes_menu() {
+    add_menu_page(
+        'Shortcodes',
+        'Shortcodes',
+        'manage_options',
+        'cc-shortcodes',
+        'cc_display_shortcodes_page',
+        'dashicons-editor-code',
+        20
+    );
+}
+add_action('admin_menu', 'cc_register_shortcodes_menu');
+
+function cc_display_shortcodes_page() {
+    ?>
+    <div class="wrap">
+        <h1>Available Shortcodes</h1>
+        <table class="widefat fixed" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Shortcode</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>[currency_converter]</td>
+                    <td>Display the currency converter.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <?php
 }
 ?>
