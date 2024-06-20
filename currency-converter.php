@@ -53,10 +53,6 @@ function cc_currency_converter($atts) {
                     <button id="cc-reverse">⇄</button>
                 </div>
                 <div class="cc-column">
-                    <label for="cc-date">Date</label>
-                    <input type="date" id="cc-date" />
-                </div>
-                <div class="cc-column">
                     <label for="cc-preview-rate">Preview Interbank Rate</label>
                     <select id="cc-preview-rate">
                         <option value="0">0%</option>
@@ -69,9 +65,9 @@ function cc_currency_converter($atts) {
                 </div>
             </div>
         </div>
-        <button id="cc-convert">Convert</button>
-        <button id="cc-print">Print</button>
-        <div id="cc-loader" style="display: none;">Loading...</div>
+        <button id="cc-convert">🔄রেট দেখুন</button>
+        <button id="cc-print">🖶 প্রিন্ট করুন</button>
+        <div id="cc-loader" style="display: none; color:green">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
         <div class="rate-showing">
             <div id="cc-result"></div>
         <div id="cc-increased-rate"></div>

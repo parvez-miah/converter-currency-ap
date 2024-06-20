@@ -6,23 +6,8 @@
   margin-bottom: 10px;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
   padding: 20px;
-}
-.loader {
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #3498db;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-  margin: auto;
-}
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  background-color: #6d5a92;
+  color: white;
 }
 
 .cc-container {
