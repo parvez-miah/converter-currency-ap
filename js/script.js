@@ -109,11 +109,14 @@ jQuery(document).ready(function ($) {
 
           $("#cc-additional-info").append(`
                       <h2>রিভার্স কনভার্সন</h2>
-                      <p>${toCurrencyName} থেকে ${fromCurrencyName}:</p>
-                      <p>১ ${toCurrencyName} = ${reverseRateFormatted} ${fromCurrencyName}</p>
-                      <p>${convertToBengali(
-                        amount
-                      )} ${toCurrencyName} = ${reverseConvertedAmountFormatted} ${fromCurrencyName}</p>
+                      <h4>${toCurrencyName} থেকে ${fromCurrencyName}:</h4>
+                        <ul>
+                     <li> <p>১ ${toCurrencyName} = ${reverseRateFormatted} ${fromCurrencyName}</p></li>
+                     <li> <p>${convertToBengali(
+                       amount
+                     )} ${toCurrencyName} = ${reverseConvertedAmountFormatted} ${fromCurrencyName}</p></li>
+                      
+                      </ul>
                   `);
 
           $("#cc-stats-7days").html(
