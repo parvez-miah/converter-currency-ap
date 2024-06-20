@@ -71,11 +71,11 @@ jQuery(document).ready(function ($) {
           let toCurrencyName = response.data.to_currency_name;
 
           $("#cc-result").html(
-            fromCurrencyName +
+            convertToBengali(amount) +
               " " +
-              convertToBengali(amount) +
+              fromCurrencyName +
               " " +
-              (fromCurrency === "USD" ? "ডলার" : "টাকা") +
+              (fromCurrency === "fromCurrencyName" ? "ডলার" : "") +
               " = " +
               toCurrencyName +
               " " +
@@ -146,7 +146,7 @@ jQuery(document).ready(function ($) {
             response.data.exchange_rate
           );
           $("#cc-increased-rate").html(
-            `এক্সচেঞ্জ রেট : ${fromCurrencyName} ১ ডলার = ${toCurrencyName} ${increasedRate}`
+            `এক্সচেঞ্জ রেট : ${fromCurrencyName} = ${toCurrencyName} ${increasedRate}`
           );
         } else {
           $("#cc-result").html("Error: " + response.data);
