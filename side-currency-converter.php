@@ -1,4 +1,5 @@
 <?php
+
 function cc_currency_converter($atts) {
     $atts = shortcode_atts(array(
         'from' => 'USD',
@@ -20,111 +21,124 @@ function cc_currency_converter($atts) {
     
     $today_date_bengali = $day . ' ' . $month . ' ' . $year;
 
-    ob_start();
-    ?>
-    <div class="cc-container">
-        <div class="main-div">
-            <div>
-                <div class="sub-amount-box">
-                    <label for="cc-amount">Amount</label>
-                    <input type="number" id="cc-amount" value="1" min="1" />
+    // Define transient key for caching
+    $transient_key = 'cc_currency_converter_' . $atts['from'] . '_' . $atts['to'];
+
+    // Attempt to fetch cached HTML
+    $cached_html = get_transient($transient_key);
+
+    if ($cached_html === false) {
+        // Start output buffering
+        ob_start();
+        ?>
+        <div class="cc-container">
+            <div class="main-div">
+                <div>
+                    <div class="sub-amount-box">
+                        <label for="cc-amount">Amount</label>
+                        <input type="number" id="cc-amount" value="1" min="1" />
+                    </div>
                 </div>
-            </div>
-            <div class="sub-dropdown-column">
-                <div class="dropdown-main">
-                    <div style="margin-right: 10px" class="cc-column">
-                        <label for="cc-from-currency">From</label>
-                        <select id="cc-from-currency">
-                            <?php cc_currency_options($atts['from']); ?>
-                        </select>
+                <div class="sub-dropdown-column">
+                    <div class="dropdown-main">
+                        <div style="margin-right: 10px" class="cc-column">
+                            <label for="cc-from-currency">From</label>
+                            <select id="cc-from-currency">
+                                <?php cc_currency_options($atts['from']); ?>
+                            </select>
+                        </div>
+                        <div class="cc-column">
+                            <label for="cc-to-currency">To</label>
+                            <select id="cc-to-currency">
+                                <?php cc_currency_options($atts['to']); ?>
+                            </select>
+                        </div>
                     </div>
                     <div class="cc-column">
-                        <label for="cc-to-currency">To</label>
-                        <select id="cc-to-currency">
-                            <?php cc_currency_options($atts['to']); ?>
+                        <button id="cc-reverse">⇄</button>
+                    </div>
+                    <div class="cc-column">
+                        <label for="cc-preview-rate">ব্যাংক রেট অ্যাডজাস্ট করুন</label>
+                        <select id="cc-preview-rate">
+                            <option value="0">0%</option>
+                            <option value="1">+1%</option>
+                            <option value="-1">-1%</option>
+                            <option value="2">+2%</option>
+                            <option value="-2">-2%</option>
+                            <!-- Add more options as needed -->
                         </select>
                     </div>
                 </div>
-                <div class="cc-column">
-                    <button id="cc-reverse">⇄</button>
-                </div>
-                <div class="cc-column">
-                    <label for="cc-preview-rate">ব্যাংক রেট অ্যাডজাস্ট করুন</label>
-                    <select id="cc-preview-rate">
-                        <option value="0">0%</option>
-                        <option value="1">+1%</option>
-                        <option value="-1">-1%</option>
-                        <option value="2">+2%</option>
-                        <option value="-2">-2%</option>
-                        <!-- Add more options as needed -->
-                    </select>
+                <div class="rate-print-button" style="display: flex; align-items: center">
+                    <button id="cc-convert" style="margin-right: 7px;">🔄রেট দেখুন</button>
+                    <button id="cc-print">🖶 প্রিন্ট করুন</button>
                 </div>
             </div>
-            <div class="rate-print-button" style="display: flex; align-items: center">
-            <button id="cc-convert" style="margin-right: 7px;">🔄রেট দেখুন</button>
-            <button id="cc-print">🖶 প্রিন্ট করুন</button>
-        </div>
-        </div>
-        
-        <div class="rate-showing">
-            <div id="cc-loader" style="display: none; color:green">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
-            <div id="cc-result"></div>
-            <div id="cc-increased-rate"></div>
-        </div>
-        <br>
-        <div>
-                    <h3 id="cc-title">আজকের টাকার রেট : <?php echo $atts['from']; ?> হতে <?php echo $atts['to']; ?></h3>
-
-                </div>
-        <table id="cc-rate-table">
-            <thead>
-                <tr>
-                    <th>পরিমাণ</th>
-                    <th>ব্যাংক রেট</th>
-                    <th>এক্সচেঞ্জ রেট</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        <p style="text-align:center">আজকের টাকার রেট : <?php echo $today_date_bengali; ?></p>
-        <br>
-        <div id="cc-additional-info"></div>
-        <div id="cc-stats-table">
             
-            <h3>গত কিছুদিনের টাকার রেট</h3>
-            <table>
+            <div class="rate-showing">
+                <div id="cc-loader" style="display: none; color:green">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
+                <div id="cc-result"></div>
+                <div id="cc-increased-rate"></div>
+            </div>
+            <br>
+            <div>
+                <h3 id="cc-title">আজকের টাকার রেট : <?php echo $atts['from']; ?> হতে <?php echo $atts['to']; ?></h3>
+            </div>
+            <table id="cc-rate-table">
                 <thead>
                     <tr>
-                        <th>সময়কাল</th>
-                        <th>রেট</th>
+                        <th>পরিমাণ</th>
+                        <th>ব্যাংক রেট</th>
+                        <th>এক্সচেঞ্জ রেট</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr><td>শেষ ৭ দিন</td><td id="cc-stats-7days"></td></tr>
-                    <tr><td>শেষ ১৫ দিন</td><td id="cc-stats-15days"></td></tr>
-                    <tr><td>শেষ ৩০ দিন</td><td id="cc-stats-30days"></td></tr>
-                </tbody>
+                <tbody></tbody>
             </table>
+            <p style="text-align:center">আজকের টাকার রেট : <?php echo $today_date_bengali; ?></p>
+            <br>
+            <div id="cc-additional-info"></div>
+            <div id="cc-stats-table">
+                <h3>গত কিছুদিনের টাকার রেট</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>সময়কাল</th>
+                            <th>রেট</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>শেষ ৭ দিন</td><td id="cc-stats-7days"></td></tr>
+                        <tr><td>শেষ ১৫ দিন</td><td id="cc-stats-15days"></td></tr>
+                        <tr><td>শেষ ৩০ দিন</td><td id="cc-stats-30days"></td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const fromCurrencyDropdown = document.getElementById('cc-from-currency');
-            const toCurrencyDropdown = document.getElementById('cc-to-currency');
-            const titleElement = document.getElementById('cc-title');
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const fromCurrencyDropdown = document.getElementById('cc-from-currency');
+                const toCurrencyDropdown = document.getElementById('cc-to-currency');
+                const titleElement = document.getElementById('cc-title');
 
-            function updateTitle() {
-                const fromCurrency = fromCurrencyDropdown.options[fromCurrencyDropdown.selectedIndex].text;
-                const toCurrency = toCurrencyDropdown.options[toCurrencyDropdown.selectedIndex].text;
-                titleElement.innerHTML = `আজকের টাকার রেট : ${fromCurrency} হতে ${toCurrency}`;
-            }
+                function updateTitle() {
+                    const fromCurrency = fromCurrencyDropdown.options[fromCurrencyDropdown.selectedIndex].text;
+                    const toCurrency = toCurrencyDropdown.options[toCurrencyDropdown.selectedIndex].text;
+                    titleElement.innerHTML = `আজকের টাকার রেট : ${fromCurrency} হতে ${toCurrency}`;
+                }
 
-            fromCurrencyDropdown.addEventListener('change', updateTitle);
-            toCurrencyDropdown.addEventListener('change', updateTitle);
-        });
-    </script>
-    <?php
-    return ob_get_clean();
+                fromCurrencyDropdown.addEventListener('change', updateTitle);
+                toCurrencyDropdown.addEventListener('change', updateTitle);
+            });
+        </script>
+        <?php
+        // Get the buffered content and clean the buffer
+        $cached_html = ob_get_clean();
+
+        // Cache the HTML for 12 hours (adjust as needed)
+        set_transient($transient_key, $cached_html, 365 * HOUR_IN_SECONDS);
+    }
+
+    return $cached_html;
 }
 add_shortcode('currency_converter', 'cc_currency_converter');
 ?>
