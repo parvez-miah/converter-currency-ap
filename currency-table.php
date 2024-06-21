@@ -79,7 +79,7 @@ function cc_currency_table() {
                 // Hide the loader and show the table
                 loader.style.display = 'none';
                 tableContainer.style.display = 'block';
-            }, 2000); // 2 seconds for demonstration, adjust as needed
+            }, 100); // 2 seconds for demonstration, adjust as needed
         });
     </script>
     <?php

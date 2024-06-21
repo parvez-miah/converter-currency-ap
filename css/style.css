@@ -1,41 +1,56 @@
-.cc-container {
-  margin: 20px;
+:root {
+  --main-color: #6b4eff;
+  --hover-color: #5733ff;
+  --background-color: #fff;
+  --border-color: #ccc;
+  --text-color: #333;
+  --highlight-color: #007bff;
+}
+
+.cc-container,
+.main-div,
+.sub-amount-box,
+.cc-column,
+.amount-box,
+.dropdown-container,
+.bank-rate-adjustment,
+.result-box {
+  margin: 10px 0;
 }
 
 .main-div {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .sub-amount-box,
+.sub-dropdown-column,
 .cc-column {
-  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-.sub-amount-box label,
-.cc-column label {
-  display: block;
-  margin-bottom: 5px;
+
+label {
   font-weight: bold;
+  color: var(--text-color);
 }
-.sub-amount-box input,
-.cc-column select {
+
+input,
+select {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
 }
-.cc-column {
-  position: relative;
-}
-.cc-column i {
-  position: absolute;
-  left: 10px;
-  top: 35px;
-  font-size: 16px;
-}
-.cc-column select {
-  padding-left: 30px;
-}
-#cc-convert {
-  background-color: #6b4eff;
+
+button {
+  background-color: var(--main-color);
   color: white;
   padding: 10px 20px;
   border: none;
@@ -43,12 +58,25 @@
   cursor: pointer;
   font-size: 16px;
   margin-top: 10px;
-}
-#cc-convert:hover {
-  background-color: #5733ff;
+  transition: background-color 0.3s;
 }
 
-/* Loader */
+button:hover {
+  background-color: var(--hover-color);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.rate-print-button button {
+  border-radius: 10px;
+  background-color: #41305e;
+}
+
+.cc-reverse button {
+  width: 20px;
+}
 
 .cc-loader {
   border: 16px solid #f3f3f3;
@@ -73,60 +101,10 @@
 .cc-table-container {
   display: none;
 }
-.cc-container {
-  margin: 10px;
-}
-
-.main-div {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.sub-amount-box,
-.sub-dropdown-column {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.cc-column {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-label {
-  font-weight: bold;
-  color: #333;
-}
-
-button:hover {
-  background-color: #41305e;
-}
-
-button:active {
-  transform: scale(0.98);
-}
-
-.cc-reverse button {
-  width: 20px;
-}
-
-.main-div button {
-  margin-top: 10px;
-}
-
-.rate-print-button button {
-  margin-top: 10px;
-  border-radius: 10px;
-  background-color: #41305e;
-  color: white;
-}
 
 .currency-converter {
-  background: #ffffff;
-  padding: 20px;
+  background: var(--background-color);
+  padding: 10px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -135,29 +113,6 @@ button:active {
   color: #28a745;
   text-decoration: none;
   font-weight: bold;
-}
-
-.amount-box,
-.dropdown-container,
-.bank-rate-adjustment,
-.result-box {
-  margin-bottom: 20px;
-}
-
-.amount-box label,
-.dropdown-box label,
-.bank-rate-adjustment label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-input[type="number"],
-select {
-  padding: 10px;
-  border: 1px solid #c8c4c4;
-  border-radius: 5px;
-  /* font-size: 1rem; */
 }
 
 .dropdown-container {
@@ -181,32 +136,25 @@ select {
 #converted-amount {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #007bff;
+  color: var(--highlight-color);
 }
+
 .rate-showing {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  margin: 10px 0;
   padding: 15px;
   font-size: 18px;
   text-align: center;
   border: 1px solid #2d1616;
-}
-
-.main-div {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .dropdown-main {
   display: flex;
   align-items: center;
 }
+
 @media only screen and (max-width: 600px) {
   .dropdown-main {
     display: inline-block;
-    align-items: center;
   }
 }
