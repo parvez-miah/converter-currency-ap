@@ -9,7 +9,8 @@ function cc_currency_converter($atts) {
     ob_start();
     ?>
     <div class="cc-container">
-        <div class="main-div">
+         <div class="main-div">
+         <div>
             <div>
                 <div class="sub-amount-box">
                     <label for="cc-amount">Amount</label>
@@ -56,6 +57,7 @@ function cc_currency_converter($atts) {
             <div id="cc-result"></div>
             <div id="cc-increased-rate"></div>
         </div>
+         </div>
         <table id="cc-rate-table">
             <thead>
                 <tr>

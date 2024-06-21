@@ -47,13 +47,7 @@
 #cc-convert:hover {
   background-color: #5733ff;
 }
-.cc-container {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  /* text-align: center; */
-}
+
 /* Loader */
 
 .cc-loader {
@@ -80,13 +74,7 @@
   display: none;
 }
 .cc-container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin: 10px;
 }
 
 .main-div {
@@ -203,4 +191,11 @@ select {
   font-size: 18px;
   text-align: center;
   border: 1px solid #2d1616;
+}
+
+.main-div {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
