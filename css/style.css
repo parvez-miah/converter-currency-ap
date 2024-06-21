@@ -119,19 +119,6 @@
     color: #333;
   }
 
-  input[type="number"],
-  select {
-    padding: 10px;
-    border: 1px solid #888181;
-    border-radius: 4px;
-    transition: border-color 0.3s;
-  }
-
-  input[type="number"]:focus,
-  select:focus {
-    border-color: #007bff;
-  }
-
   button:hover {
     background-color: #41305e;
   }
