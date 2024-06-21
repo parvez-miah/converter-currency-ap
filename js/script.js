@@ -128,20 +128,6 @@ jQuery(document).ready(function ($) {
           $("#cc-stats-30days").html(
             formatBengaliCurrency(response.data.historical_rates["30days"])
           );
-
-          const graphHtml7days = `
-                      <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=7d" alt="Graph for last 7 days" />
-                  `;
-          const graphHtml1month = `
-                      <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=1m" alt="Graph for last month" />
-                  `;
-          const graphHtml1year = `
-                      <img src="https://www.google.com/finance/chart?q=${fromCurrency}-${toCurrency}&t=1y" alt="Graph for last year" />
-                  `;
-          $("#graph-7days").html(graphHtml7days);
-          $("#graph-1month").html(graphHtml1month);
-          $("#graph-1year").html(graphHtml1year);
-
           const increasedRate = formatBengaliCurrency(
             response.data.exchange_rate
           );
