@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajker Takar Rate
 Description: A simple currency converter that fetches data from Google Finance and caches it.
-Version: 1.0.2
+Version: 1.0.3
 Author: Ajker Takar Rate
 */
 
@@ -17,7 +17,9 @@ include_once(plugin_dir_path(__FILE__) . 'currency-names.php'); // Include the n
 // Enqueue necessary scripts and styles
 function cc_enqueue_scripts() {
     wp_enqueue_style('cc-styles', plugins_url('css/style.css', __FILE__));
-    wp_enqueue_style('cc-print-styles', plugins_url('css/print.css', __FILE__), array(), null, 'print');
+    if (is_singular()) {
+        wp_enqueue_style('cc-print-styles', plugins_url('css/print.css', __FILE__), array(), null, 'print');
+    }
     wp_enqueue_script('cc-scripts', plugins_url('js/script.js', __FILE__), array('jquery'), null, true);
     wp_localize_script('cc-scripts', 'ccAjax', array('ajax_url' => admin_url('admin-ajax.php')));
 }
@@ -29,7 +31,6 @@ function get_conversion_rate($from_currency, $to_currency) {
     $rate = get_transient($cache_key);
 
     if ($rate === false) {
-        // If cache is not found, fetch the rate
         $response = wp_remote_get("https://www.google.com/finance/quote/{$from_currency}-{$to_currency}");
         if (!is_wp_error($response)) {
             $body = wp_remote_retrieve_body($response);
@@ -48,8 +49,7 @@ function get_conversion_rate($from_currency, $to_currency) {
 function cc_update_cache() {
     $currencies = array('USD' => 'BDT'); // Add more currency pairs as needed
     foreach ($currencies as $from => $to) {
-        $rate = get_conversion_rate($from, $to);
-        // The get_conversion_rate function already handles updating the cache
+        get_conversion_rate($from, $to); // This function updates the cache
     }
 }
 add_action('wp_scheduled_cache_update', 'cc_update_cache');
@@ -72,7 +72,6 @@ function cc_convert_currency() {
     $rate = get_conversion_rate($from_currency, $to_currency);
 
     if ($rate === false) {
-        // If rate is still not found, return an error
         wp_send_json_error('কিছু একটা সমস্যা হয়েছে। একটু অপেক্ষা করুন, আপডেট হয়ে যাবে...');
     }
 
@@ -90,7 +89,7 @@ function cc_convert_currency() {
         '30days' => $rate * 0.95
     ];
 
-    $currency_names = get_currency_names();
+    $currency_names = cc_get_currency_names();
 
     wp_send_json_success(array(
         'rate' => $rate,
@@ -110,19 +109,26 @@ add_action('wp_ajax_cc_convert_currency', 'cc_convert_currency');
 add_action('wp_ajax_nopriv_cc_convert_currency', 'cc_convert_currency');
 
 // Add available currencies (example: dynamic dropdown)
-function cc_get_currencies() {
-    return get_currency_names();
+function cc_get_currency_names() {
+    $cache_key = 'cc_currency_names';
+    $currency_names = get_transient($cache_key);
+
+    if ($currency_names === false) {
+        $currency_names = get_currency_names(); // Assuming this function returns an array of currency names
+        set_transient($cache_key, $currency_names, WEEK_IN_SECONDS); // Cache for 1 week
+    }
+
+    return $currency_names;
 }
 
 function cc_currency_options($selected = '') {
-    $currencies = cc_get_currencies();
+    $currencies = cc_get_currency_names();
     foreach ($currencies as $code => $name) {
         echo '<option value="' . $code . '"' . selected($selected, $code, false) . '>' . $name . '</option>';
     }
 }
 
 // Create the Currency Converter Shortcode
-// Add "Shortcodes" menu item
 function cc_register_shortcodes_menu() {
     add_menu_page(
         'Takar Rate',
@@ -142,7 +148,7 @@ function cc_display_shortcodes_page() {
         <h1>Shortcodes</h1>
         <p>Use the following shortcodes to embed the currency converter:</p>
         <code>[currency_converter]</code>
-        <code>[currency_converter from = "BDT" to ="USD"]</code>
+        <code>[currency_converter from="BDT" to="USD"]</code>
         <code>[currency_table]</code>
     </div>
     <?php
