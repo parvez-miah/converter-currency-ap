@@ -18,7 +18,7 @@ function cc_currency_converter($atts) {
                 </div>
             </div>
             <div class="sub-dropdown-column">
-               <div style="display:flex; align-items: center; ">
+               <div class="dropdown-main">
                <div style="margin-right: 10px" class="cc-column">
                     <label for="cc-from-currency">From</label>
                     <select id="cc-from-currency">
