@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: My Unique Currency Converter
+Plugin Name: Ajker Takar Rate
 Description: A simple currency converter that fetches data from Google Finance and caches it.
 Version: 1111112.0
-Author: Your Unique Name
+Author: Ajker Takar Rate
 */
 
 if (!defined('ABSPATH')) {
@@ -125,8 +125,8 @@ function cc_currency_options($selected = '') {
 // Add "Shortcodes" menu item
 function cc_register_shortcodes_menu() {
     add_menu_page(
-        'Shortcodes',
-        'Shortcodes',
+        'Takar Rate',
+        'Takar Rate',
         'manage_options',
         'cc-shortcodes',
         'cc_display_shortcodes_page',
@@ -142,6 +142,8 @@ function cc_display_shortcodes_page() {
         <h1>Shortcodes</h1>
         <p>Use the following shortcodes to embed the currency converter:</p>
         <code>[currency_converter]</code>
+        <code>[currency_converter from = "BDT" to ="USD"]</code>
+        <code>[currency_table]</code>
     </div>
     <?php
 }
