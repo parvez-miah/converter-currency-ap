@@ -1,7 +1,5 @@
 <?php
 
-
-
 function cc_currency_converter($atts) {
     $atts = shortcode_atts(array(
         'from' => 'USD',
@@ -35,7 +33,7 @@ function cc_currency_converter($atts) {
                     <button id="cc-reverse">⇄</button>
                 </div>
                 <div class="cc-column">
-                    <label for="cc-preview-rate">Preview Interbank Rate</label>
+                    <label for="cc-preview-rate">ব্যাংক রেট অ্যাডজাস্ট করুন</label>
                     <select id="cc-preview-rate">
                         <option value="0">0%</option>
                         <option value="1">+1%</option>
@@ -47,8 +45,8 @@ function cc_currency_converter($atts) {
                 </div>
             </div>
         </div>
-       <div style="display: flex; align-items: center">
-       <button style="margin-right: 10px" id="cc-convert">🔄রেট দেখুন</button>
+       <div class="rate-print-button" style="display: flex; align-items: center">
+       <button id="cc-convert" style="margin-right: 7px;">🔄রেট দেখুন</button>
        <button id="cc-print">🖶 প্রিন্ট করুন</button>
        </div>
         <div id="cc-loader" style="display: none; color:green">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>

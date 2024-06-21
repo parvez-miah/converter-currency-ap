@@ -6,9 +6,13 @@ jQuery(document).ready(function ($) {
     });
   }
 
+  function addCommasToNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   function formatBengaliCurrency(amount) {
     const parts = amount.toFixed(2).split(".");
-    const taka = convertToBengali(parts[0]);
+    const taka = convertToBengali(addCommasToNumber(parts[0]));
     const poisa = convertToBengali(parts[1]);
     return taka + " টাকা " + poisa + " পয়সা";
   }
@@ -79,7 +83,8 @@ jQuery(document).ready(function ($) {
               " = " +
               toCurrencyName +
               " " +
-              convertedAmountFormatted
+              convertedAmountFormatted +
+              "।"
           );
 
           $("#cc-rate-table tbody").html(bankRates);

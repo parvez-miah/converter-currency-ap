@@ -1,5 +1,3 @@
-
-
 <?php
 // Function to convert numbers to Bengali format and add Taka and Poisa
 function format_bengali_currency($amount) {
