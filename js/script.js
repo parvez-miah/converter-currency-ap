@@ -137,7 +137,7 @@ jQuery(document).ready(function ($) {
             response.data.exchange_rate
           );
           $("#cc-increased-rate").html(
-            `এক্সচেঞ্জ রেট : ${fromCurrencyName} = ${toCurrencyName} ${increasedRate}`
+            `<b>এক্সচেঞ্জ রেট</b> : ${fromCurrencyName} = ${toCurrencyName} ${increasedRate}`
           );
         } else {
           $("#cc-result").html("Error: " + response.data);
