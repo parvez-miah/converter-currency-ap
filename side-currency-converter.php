@@ -17,7 +17,8 @@ function cc_currency_converter($atts) {
                 </div>
             </div>
             <div class="sub-dropdown-column">
-                <div class="cc-column">
+               <div style="display:flex; align-items: center; ">
+               <div style="margin-right: 10px" class="cc-column">
                     <label for="cc-from-currency">From</label>
                     <select id="cc-from-currency">
                         <?php cc_currency_options($atts['from']); ?>
@@ -29,6 +30,7 @@ function cc_currency_converter($atts) {
                         <?php cc_currency_options($atts['to']); ?>
                     </select>
                 </div>
+               </div>
                 <div class="cc-column">
                     <button id="cc-reverse">⇄</button>
                 </div>

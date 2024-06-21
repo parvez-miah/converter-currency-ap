@@ -73,7 +73,7 @@ function cc_convert_currency() {
 
     if ($rate === false) {
         // If rate is still not found, return an error
-        wp_send_json_error('এই মুদ্রাটি আর ব্যবহার করা হচ্ছে না! অন্য মুদ্রা চেষ্টা করুন...');
+        wp_send_json_error('কিছু একটা সমস্যা হয়েছে। একটু অপেক্ষা করুন, আপডেট হয়ে যাবে...');
     }
 
     $adjusted_rate = $rate * (1 + $preview_rate / 100);
