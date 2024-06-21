@@ -92,7 +92,7 @@ jQuery(document).ready(function ($) {
           const additionalInfo = `
                       <p>এখান থেকে আপনি জেনে নিতে পারবেন, ${fromCurrencyName} থেকে ${toCurrencyName} রূপান্তর করার পরিবর্তে আপনি কত টাকা পেতে পারেন সেই সংক্রান্ত যাবতীয় তথ্য। অর্থাৎ আজকের টাকার রেট হিসেবে আপনি জেনে নিতে পারবেন, ${fromCurrencyName} থেকে ${toCurrencyName} সংক্রান্ত যাবতীয় তথ্য।</p>
                       <p>সেজন্য আপনি যদি এই সংক্রান্ত যাবতীয় তথ্য জেনে নিতে চান এবং একই সাথে আজকের টাকার রেট সংক্রান্ত তথ্য জেনে নিতে চান তাহলে সেটি এখান থেকে জেনে নিতে পারেন।</p>
-                      <h2>${fromCurrencyName} থেকে ${toCurrencyName} ক্ষেত্রে, আজকের টাকার মান কত সেটা নিয়ে কিছু প্রশ্ন উত্তর?</h2>
+                      <h2>${fromCurrencyName} থেকে ${toCurrencyName} জন্য, আজকের টাকার মান কত সেটা নিয়ে কিছু প্রশ্ন উত্তর?</h2>
                       <h3>আজকের ${fromCurrencyName} থেকে ${toCurrencyName} টাকার রেট কত?</h3>
                       <h3> ১ ${fromCurrencyName} সমান কত ${toCurrencyName}?</h3>
                       <p>১ ${fromCurrencyName} সমান হবে, ${convertedAmountFormatted} ${toCurrencyName}।</p>
