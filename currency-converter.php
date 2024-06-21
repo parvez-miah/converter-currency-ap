@@ -66,14 +66,14 @@ function cc_convert_currency() {
     $preview_rate = floatval($_POST['preview_rate']);
 
     if ($from_currency === $to_currency) {
-        wp_send_json_error('টাকার রেট আপডেট হয়েছে নিচে দেখুন।');
+        wp_send_json_error('একই মুদ্রার নাম ব্যবহার করা হয়েছে! পরিবর্তন করুন...');
     }
 
     $rate = get_conversion_rate($from_currency, $to_currency);
 
     if ($rate === false) {
         // If rate is still not found, return an error
-        wp_send_json_error('Conversion rate could not be fetched.');
+        wp_send_json_error('এই মুদ্রাটি আর ব্যবহার করা হচ্ছে না! অন্য মুদ্রা চেষ্টা করুন...');
     }
 
     $adjusted_rate = $rate * (1 + $preview_rate / 100);
