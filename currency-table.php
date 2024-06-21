@@ -20,9 +20,9 @@ function cc_currency_table() {
         <table class="cc-currency-table">
             <thead>
                 <tr>
-                    <th>মুদ্রা</th>
-                    <th>ব্যাংকের রেট</th>
-                    <th>এএক্সচেঞ্জ রেট</th>
+                    <th>মুদ্রার নাম</th>
+                    <th>ব্যাংকের টাকার রেট</th>
+                    <th>এক্সচেঞ্জ রেট</th>
                 </tr>
             </thead>
             <tbody>
