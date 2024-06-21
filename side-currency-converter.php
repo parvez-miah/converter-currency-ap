@@ -60,13 +60,14 @@ function cc_currency_converter($atts) {
                     </select>
                 </div>
             </div>
-        </div>
-        <div class="rate-print-button" style="display: flex; align-items: center">
+            <div class="rate-print-button" style="display: flex; align-items: center">
             <button id="cc-convert" style="margin-right: 7px;">🔄রেট দেখুন</button>
             <button id="cc-print">🖶 প্রিন্ট করুন</button>
         </div>
-        <div id="cc-loader" style="display: none; color:green">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
+        </div>
+        
         <div class="rate-showing">
+            <div id="cc-loader" style="display: none; color:green">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
             <div id="cc-result"></div>
             <div id="cc-increased-rate"></div>
         </div>
