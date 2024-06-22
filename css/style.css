@@ -158,3 +158,26 @@ button:active {
     display: inline-block;
   }
 }
+
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="reset"],
+input[type="search"],
+input[type="tel"],
+input[type="text"],
+input[type="url"],
+select,
+textarea {
+  color: #666;
+  padding: 0.39em;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--ast-border-color);
+  border-radius: 12px;
+  background: var(--ast-comment-inputs-background);
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px,
+    rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+  box-sizing: border-box;
+  transition: all 0.2s linear;
+}
