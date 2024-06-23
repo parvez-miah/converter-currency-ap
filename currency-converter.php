@@ -12,7 +12,8 @@ if (!defined('ABSPATH')) {
 
 include_once(plugin_dir_path(__FILE__) . 'currency-table.php');
 include_once(plugin_dir_path(__FILE__) . 'side-currency-converter.php');
-include_once(plugin_dir_path(__FILE__) . 'currency-names.php'); // Include the new PHP file
+include_once(plugin_dir_path(__FILE__) . 'currency-names.php');
+include_once(plugin_dir_path(__FILE__) . 'currency-table-names.php');
 
 // Enqueue necessary scripts and styles
 function cc_enqueue_scripts() {
@@ -149,6 +150,16 @@ function cc_register_shortcodes_menu() {
         'cc-clear-cache',
         'cc_clear_cache_page'
     );
+
+    // Add Clear Currency Table Cache submenu
+    add_submenu_page(
+        'cc-shortcodes',
+        'Clear Currency Table Cache',
+        'Clear Currency Table Cache',
+        'manage_options',
+        'cc-clear-currency-table-cache',
+        'cc_clear_currency_table_cache_page'
+    );
 }
 add_action('admin_menu', 'cc_register_shortcodes_menu');
 
@@ -187,6 +198,29 @@ function cc_clear_cache_page() {
     <?php
 }
 
+function cc_clear_currency_table_cache_page() {
+    ?>
+    <div class="wrap">
+        <h1>Clear Currency Table Cache</h1>
+        <p>Click the button below to clear the cache for the Currency Table:</p>
+        <button id="cc-clear-currency-table-cache-button" class="button button-primary">Clear Currency Table Cache</button>
+    </div>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('#cc-clear-currency-table-cache-button').on('click', function() {
+            $.post(ajaxurl, { action: 'cc_clear_currency_table_cache' }, function(response) {
+                if (response.success) {
+                    alert('Currency Table Cache cleared successfully!');
+                } else {
+                    alert('Failed to clear currency table cache.');
+                }
+            });
+        });
+    });
+    </script>
+    <?php
+}
+
 function cc_clear_cache() {
     global $wpdb;
     $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_cc_%'");
@@ -194,5 +228,11 @@ function cc_clear_cache() {
     wp_send_json_success();
 }
 
+function cc_clear_currency_table_cache() {
+    delete_transient('cached_currency_data');
+    wp_send_json_success();
+}
+
 add_action('wp_ajax_cc_clear_cache', 'cc_clear_cache');
+add_action('wp_ajax_cc_clear_currency_table_cache', 'cc_clear_currency_table_cache');
 ?>
