@@ -6,8 +6,8 @@ if (!defined('ABSPATH')) {
 
 function get_currency_names() {
     return [
-        'USD' => 'আমেরিকান ডলার',
         'BDT' => 'বাংলাদেশি টাকা',
+        'USD' => 'আমেরিকান ডলার',
         'EUR' => 'ইউরো',
         'JPY' => 'জাপানি ইয়েন',
         'GBP' => 'ব্রিটিশ পাউন্ড',

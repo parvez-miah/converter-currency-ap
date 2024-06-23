@@ -14,13 +14,23 @@ function format_bengali_currency($amount) {
 // Include the currency names from an external file
 include_once 'currency-table-names.php';
 
+// Cache currency names permanently using WordPress options
+function get_permanent_currency_names() {
+    $currencies = get_option('permanent_currency_names');
+    if ($currencies === false) {
+        $currencies = get_table_currency_names();
+        update_option('permanent_currency_names', $currencies);
+    }
+    return $currencies;
+}
+
 // Create the Currency Table Shortcode
 function cc_currency_table() {
     // Get cached data
     $currency_data = get_transient('cached_currency_data');
 
     if ($currency_data === false) {
-        $currencies = get_table_currency_names();
+        $currencies = get_permanent_currency_names();
         $currency_data = [];
 
         foreach ($currencies as $currency_code => $currency_name) {
