@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajker Takar Rate
 Description: A simple currency converter that fetches data from Google Finance and caches it.
-Version: 11.0.3
+Version: 11.0.4
 Author: Ajker Takar Rate
 */
 
@@ -115,7 +115,7 @@ function cc_get_currency_names() {
 
     if ($currency_names === false) {
         $currency_names = get_currency_names(); // Assuming this function returns an array of currency names
-        set_transient($cache_key, $currency_names, WEEK_IN_SECONDS); // Cache for 1 week
+        set_transient($cache_key, $currency_names, 31536000); // Cache for 1 year (31536000 seconds)
     }
 
     return $currency_names;
@@ -136,8 +136,18 @@ function cc_register_shortcodes_menu() {
         'manage_options',
         'cc-shortcodes',
         'cc_display_shortcodes_page',
-        'dashicons-editor-code',
+        'dashicons-money-alt', // Change the icon here
         20
+    );
+
+    // Add Clear Cache submenu
+    add_submenu_page(
+        'cc-shortcodes',
+        'Clear Cache',
+        'Clear Cache',
+        'manage_options',
+        'cc-clear-cache',
+        'cc_clear_cache_page'
     );
 }
 add_action('admin_menu', 'cc_register_shortcodes_menu');
@@ -153,4 +163,36 @@ function cc_display_shortcodes_page() {
     </div>
     <?php
 }
+
+function cc_clear_cache_page() {
+    ?>
+    <div class="wrap">
+        <h1>Clear Cache</h1>
+        <p>Click the button below to clear the cache for the Ajker Takar Rate plugin:</p>
+        <button id="cc-clear-cache-button" class="button button-primary">Clear Cache</button>
+    </div>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('#cc-clear-cache-button').on('click', function() {
+            $.post(ajaxurl, { action: 'cc_clear_cache' }, function(response) {
+                if (response.success) {
+                    alert('Cache cleared successfully!');
+                } else {
+                    alert('Failed to clear cache.');
+                }
+            });
+        });
+    });
+    </script>
+    <?php
+}
+
+function cc_clear_cache() {
+    global $wpdb;
+    $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_cc_%'");
+    $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_cc_%'");
+    wp_send_json_success();
+}
+
+add_action('wp_ajax_cc_clear_cache', 'cc_clear_cache');
 ?>

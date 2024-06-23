@@ -94,8 +94,6 @@ function cc_currency_converter($atts) {
                 </thead>
                 <tbody></tbody>
             </table>
-            <p style="text-align:center">আজকের টাকার রেট : <?php echo $today_date_bengali; ?></p>
-            <br>
             <div id="cc-additional-info"></div>
             <div id="cc-stats-table">
                 <h3>গত কিছুদিনের টাকার রেট</h3>
@@ -135,7 +133,7 @@ function cc_currency_converter($atts) {
         $cached_html = ob_get_clean();
 
         // Cache the HTML for 12 hours (adjust as needed)
-        set_transient($transient_key, $cached_html, 365 * HOUR_IN_SECONDS);
+        set_transient($transient_key, $cached_html, 31536000);
     }
 
     return $cached_html;

@@ -11,78 +11,72 @@ function format_bengali_currency($amount) {
     return $bengali_taka . ' টাকা ' . $bengali_poisa . ' পয়সা';
 }
 
+// Include the currency names from an external file
+include 'currency-names.php';
+
 // Create the Currency Table Shortcode
 function cc_currency_table() {
+    // Get cached data
+    $cached_data = get_transient('cached_currency_data');
+
+    if ($cached_data === false) {
+        $currencies = get_currency_names();
+        $currency_rates = []; // Cache currency rates
+
+        foreach ($currencies as $currency_code => $currency_name) {
+            $rate = get_conversion_rate($currency_code, 'BDT');
+            if ($rate !== false) {
+                $currency_rates[$currency_code] = $rate;
+                $bank_rate = $rate;
+                $exchange_rate = $bank_rate * 1.02;
+
+                // Convert to Bengali numbers and format
+                $bank_rate_bengali = format_bengali_currency($bank_rate);
+                $exchange_rate_bengali = format_bengali_currency($exchange_rate);
+
+                $currency_data[] = [
+                    'currency_name' => $currency_name,
+                    'bank_rate' => $bank_rate_bengali,
+                    'exchange_rate' => $exchange_rate_bengali
+                ];
+            }
+        }
+        // Cache data for 12 hours
+        set_transient('cached_currency_data', $currency_data, 12 * HOUR_IN_SECONDS);
+    } else {
+        $currency_data = $cached_data;
+    }
+
     ob_start();
     ?>
+    <input type="text" id="searchBar" placeholder="দেশের নাম সার্চ করুন...">
     <div class="cc-loader"></div>
     <div class="cc-table-container">
         <table class="cc-currency-table">
             <thead>
                 <tr>
-                    <th>মুদ্রার নাম</th>
-                    <th>ব্যাংকের টাকার রেট</th>
+                    <th>মুদ্রা</th>
+                    <th>ব্যাংক রেট</th>
                     <th>এক্সচেঞ্জ রেট</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="currencyTableBody">
                 <?php
-                $currencies = array(
-                    'USD' => 'আমেরিকান ডলার',
-                    'EUR' => 'ইউরো',
-                    'AED' => 'দুবাই দিরহাম',
-                    'QAR' => 'কাতারি রিয়াল',
-                    'KWD' => 'কুয়েতি দিনার',
-                    'OMR' => 'ওমানি রিয়াল',
-                    'SGD' => 'সিঙ্গাপুরি ডলার',
-                    'MYR' => 'মালয়েশিয়ান রিঙ্গিত',
-                    'AUD' => 'অস্ট্রেলিয়ান ডলার',
-                    'CAD' => 'কানাডিয়ান ডলার',
-                    'GBP' => 'ব্রিটিশ পাউন্ড',
-                    'CHF' => 'সুইস ফ্রাঁ',
-                    'CNY' => 'চীনা ইয়েন',
-                    'JPY' => 'জাপানি ইয়েন',
-                    'THB' => 'থাই বাথ'
-                );
-
-                foreach ($currencies as $currency_code => $currency_name) {
-                    $rate = get_conversion_rate($currency_code, 'BDT');
-                    if ($rate !== false) {
-                        $bank_rate = $rate;
-                        $exchange_rate = $bank_rate * 1.02;
-
-                        // Convert to Bengali numbers and format
-                        $bank_rate_bengali = format_bengali_currency($bank_rate);
-                        $exchange_rate_bengali = format_bengali_currency($exchange_rate);
-
-                        echo '<tr>';
-                        echo '<td>' . $currency_name . '</td>';
-                        echo '<td>' . $bank_rate_bengali . '</td>';
-                        echo '<td>' . $exchange_rate_bengali . '</td>';
-                        echo '</tr>';
-                    }
+                foreach ($currency_data as $data) {
+                    echo '<tr>';
+                    echo '<td>' . $data['currency_name'] . '</td>';
+                    echo '<td>' . $data['bank_rate'] . '</td>';
+                    echo '<td>' . $data['exchange_rate'] . '</td>';
+                    echo '</tr>';
                 }
                 ?>
             </tbody>
         </table>
+        <div id="pagination"></div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var loader = document.querySelector('.cc-loader');
-            var tableContainer = document.querySelector('.cc-table-container');
-
-            // Show the loader
-            loader.style.display = 'block';
-
-            // Simulate fetching data
-            setTimeout(function() {
-                // Hide the loader and show the table
-                loader.style.display = 'none';
-                tableContainer.style.display = 'block';
-            }, 100); // 2 seconds for demonstration, adjust as needed
-        });
-    </script>
+    <p id="noResults" style="display:none;">ফলাফল পাওয়া যায়নি</p>
     <?php
     return ob_get_clean();
 }
 add_shortcode('currency_table', 'cc_currency_table');
+?>
