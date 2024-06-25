@@ -21,10 +21,12 @@ function cc_enqueue_scripts() {
     if (is_singular()) {
         wp_enqueue_style('cc-print-styles', plugins_url('css/print.css', __FILE__), array(), null, 'print');
     }
-    wp_enqueue_script('cc-scripts', plugins_url('js/script.js', __FILE__), array('jquery'), null, true);
-    wp_localize_script('cc-scripts', 'ccAjax', array('ajax_url' => admin_url('admin-ajax.php')));
+    wp_enqueue_script('cc-scripts-main', plugins_url('js/script.js', __FILE__), array('jquery'), null, true);
+    wp_enqueue_script('cc-currency-table', plugins_url('js/currency-table.js', __FILE__), array('jquery'), null, true);
+    wp_localize_script('cc-currency-table', 'ccAjax', array('ajax_url' => admin_url('admin-ajax.php')));
 }
 add_action('wp_enqueue_scripts', 'cc_enqueue_scripts');
+
 
 // Fetch and cache conversion rate
 function get_conversion_rate($from_currency, $to_currency) {

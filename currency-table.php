@@ -1,5 +1,4 @@
 <?php
-// Function to convert numbers to Bengali format and add Taka and Poisa
 function format_bengali_currency($amount) {
     $bengali_nums = array("০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯");
     $formatted_amount = number_format($amount, 2, '.', '');
@@ -11,10 +10,8 @@ function format_bengali_currency($amount) {
     return "{$bengali_taka} টাকা {$bengali_poisa} পয়সা";
 }
 
-// Include the currency names from an external file
 include_once 'currency-table-names.php';
 
-// Cache currency names permanently using WordPress options
 function get_permanent_currency_names() {
     $currencies = get_option('permanent_currency_names');
     if ($currencies === false) {
@@ -24,9 +21,7 @@ function get_permanent_currency_names() {
     return $currencies;
 }
 
-// Create the Currency Table Shortcode
 function cc_currency_table() {
-    // Get cached data
     $currency_data = get_transient('cached_currency_data');
 
     if ($currency_data === false) {
@@ -39,7 +34,6 @@ function cc_currency_table() {
                 $bank_rate = $rate;
                 $exchange_rate = $bank_rate * 1.02;
 
-                // Convert to Bengali numbers and format
                 $currency_data[] = [
                     'currency_name' => $currency_name,
                     'bank_rate' => format_bengali_currency($bank_rate),
@@ -47,15 +41,17 @@ function cc_currency_table() {
                 ];
             }
         }
-        // Cache data for 12 hours
         set_transient('cached_currency_data', $currency_data, 12 * HOUR_IN_SECONDS);
     }
+
+    $initial_data = array_slice($currency_data, 0, 6);
+    $remaining_data = array_slice($currency_data, 6);
 
     ob_start();
     ?>
     <input type="text" id="searchBar" placeholder="দেশের নাম সার্চ করুন...">
     <div class="cc-loader"></div>
-    <div class="cc-table-container">
+    <div class="cc-table-container" style="display:none;">
         <table class="cc-currency-table">
             <thead>
                 <tr>
@@ -65,7 +61,7 @@ function cc_currency_table() {
                 </tr>
             </thead>
             <tbody id="currencyTableBody">
-                <?php foreach ($currency_data as $data): ?>
+                <?php foreach ($initial_data as $data): ?>
                     <tr>
                         <td><?php echo $data['currency_name']; ?></td>
                         <td><?php echo $data['bank_rate']; ?></td>
@@ -75,8 +71,10 @@ function cc_currency_table() {
             </tbody>
         </table>
         <div id="pagination"></div>
+        <button id="loadMore">সকল দেশের টাকার রেট দেখুন..</button>
     </div>
     <p id="noResults" style="display:none;">ফলাফল পাওয়া যায়নি</p>
+    <script id="currencyData" type="application/json"><?php echo json_encode($remaining_data); ?></script>
     <style>
         .cc-table-container { margin: 20px 0; }
         .cc-currency-table { width: 100%; border-collapse: collapse; }
@@ -84,24 +82,9 @@ function cc_currency_table() {
         #searchBar { margin-bottom: 10px; padding: 8px; width: 100%; }
         .cc-loader { display: none; }
         #noResults { color: red; }
+        #loadMore { display: block; margin: 20px auto; padding: 10px; }
     </style>
-    <script>
-        document.getElementById('searchBar').addEventListener('input', function() {
-            var filter = this.value.toLowerCase();
-            var rows = document.querySelectorAll('#currencyTableBody tr');
-            var found = false;
-            rows.forEach(function(row) {
-                var cell = row.querySelector('td').innerText.toLowerCase();
-                if (cell.includes(filter)) {
-                    row.style.display = '';
-                    found = true;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-            document.getElementById('noResults').style.display = found ? 'none' : 'block';
-        });
-    </script>
+    <script src="<?php echo plugin_dir_url(__FILE__); ?>js/currency-table.js"></script>
     <?php
     return ob_get_clean();
 }
