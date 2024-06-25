@@ -35,9 +35,7 @@ function cc_currency_table() {
                     <th>এক্সচেঞ্জ রেট</th>
                 </tr>
             </thead>
-            <tbody id="currencyTableBody">
-                <!-- Rows will be inserted here by JavaScript -->
-            </tbody>
+            <tbody id="currencyTableBody"></tbody>
         </table>
         <div id="pagination"></div>
         <button id="loadMore" style="display:none;">আরও দেখুন</button>
@@ -81,13 +79,7 @@ function cc_fetch_currency_data() {
         set_transient('cached_currency_data', $currency_data, 12 * HOUR_IN_SECONDS);
     }
 
-    $initial_data = array_slice($currency_data, 0, 6);
-    $remaining_data = array_slice($currency_data, 6);
-
-    wp_send_json_success([
-        'initial_data' => $initial_data,
-        'remaining_data' => $remaining_data
-    ]);
+    wp_send_json_success($currency_data);
 }
 add_action('wp_ajax_cc_fetch_currency_data', 'cc_fetch_currency_data');
 add_action('wp_ajax_nopriv_cc_fetch_currency_data', 'cc_fetch_currency_data');
