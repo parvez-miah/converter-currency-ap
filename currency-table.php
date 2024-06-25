@@ -41,6 +41,7 @@ function cc_currency_table() {
         <button id="loadMore" style="display:none;">আরও দেখুন</button>
     </div>
     <p id="noResults" style="display:none;">ফলাফল পাওয়া যায়নি</p>
+    <br>
     <script src="<?php echo plugin_dir_url(__FILE__); ?>js/currency-table.js"></script>
     <?php
     return ob_get_clean();
