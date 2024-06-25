@@ -4,10 +4,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const searchBar = document.getElementById("searchBar");
   const noResults = document.getElementById("noResults");
   const currencyTableBody = document.getElementById("currencyTableBody");
-  const loadMoreButton = document.getElementById("loadMore");
   const paginationContainer = document.getElementById("pagination");
 
   let allRows = [];
+  let filteredRows = [];
   let currentPage = 1;
   const rowsPerPage = 6;
 
@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (data.success) {
           const currencyData = data.data;
           allRows = currencyData.map(createRow);
+          filteredRows = [...allRows];
           loader.style.display = "none";
           tableContainer.style.display = "block";
           displayPage(1);
@@ -29,20 +30,20 @@ document.addEventListener("DOMContentLoaded", function () {
   function createRow(data) {
     const row = document.createElement("tr");
     row.innerHTML = `
-        <td>${data.currency_name}</td>
-        <td>${data.bank_rate}</td>
-        <td>${data.exchange_rate}</td>
-      `;
+          <td>${data.currency_name}</td>
+          <td>${data.bank_rate}</td>
+          <td>${data.exchange_rate}</td>
+        `;
     return row;
   }
 
   function setupPagination() {
     paginationContainer.innerHTML = "";
-    const pageCount = Math.ceil(allRows.length / rowsPerPage);
+    const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
 
     if (pageCount > 1) {
       const prevButton = createPaginationButton(
-        "Previous",
+        "← পূর্ববর্তী",
         currentPage === 1,
         () => {
           if (currentPage > 1) displayPage(currentPage - 1);
@@ -50,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
       const nextButton = createPaginationButton(
-        "Next",
+        "পরবর্তী →",
         currentPage === pageCount,
         () => {
           if (currentPage < pageCount) displayPage(currentPage + 1);
@@ -77,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const end = start + rowsPerPage;
 
     currencyTableBody.innerHTML = "";
-    allRows
+    filteredRows
       .slice(start, end)
       .forEach((row) => currencyTableBody.appendChild(row));
     updatePaginationButtons();
@@ -88,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (buttons.length > 0) {
       buttons[0].disabled = currentPage === 1;
       buttons[1].disabled =
-        currentPage === Math.ceil(allRows.length / rowsPerPage);
+        currentPage === Math.ceil(filteredRows.length / rowsPerPage);
     }
   }
 
@@ -96,13 +97,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function filterTable() {
     const filter = searchBar.value.toLowerCase();
-    const filteredRows = allRows.filter((row) => {
+    filteredRows = allRows.filter((row) => {
       const cell = row.querySelector("td:first-child");
       return cell ? cell.textContent.toLowerCase().includes(filter) : false;
     });
 
     noResults.style.display = filteredRows.length === 0 ? "block" : "none";
-    allRows = filteredRows;
     displayPage(1);
     setupPagination();
   }

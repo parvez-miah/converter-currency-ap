@@ -249,11 +249,3 @@ textarea {
   margin: 20px auto;
   padding: 10px;
 }
-
-.cc-table-container,
-#noResults,
-#pagination,
-#searchBar,
-#loadMore {
-  text-align: center;
-}
