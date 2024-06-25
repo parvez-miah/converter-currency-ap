@@ -7,13 +7,47 @@ document.addEventListener("DOMContentLoaded", function () {
   var loadMoreButton = document.getElementById("loadMore");
   var paginationContainer = document.getElementById("pagination");
 
-  var initialRows = Array.from(currencyTableBody.querySelectorAll("tr"));
-  var remainingData = JSON.parse(
-    document.getElementById("currencyData").textContent
-  );
-  var allRows = initialRows.slice();
+  var allRows = [];
+  var remainingData = [];
   var currentPage = 1;
   var rowsPerPage = 6;
+
+  function fetchData() {
+    fetch(ccAjax.ajax_url + "?action=cc_fetch_currency_data")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          var initialData = data.data.initial_data;
+          remainingData = data.data.remaining_data;
+          initialData.forEach(function (data) {
+            var row = createRow(data);
+            allRows.push(row);
+            currencyTableBody.appendChild(row);
+          });
+
+          loader.style.display = "none";
+          tableContainer.style.display = "block";
+          setupPagination(allRows);
+          displayPage(1);
+          loadMoreButton.style.display =
+            remainingData.length > 0 ? "block" : "none";
+        }
+      });
+  }
+
+  function createRow(data) {
+    var row = document.createElement("tr");
+    var nameCell = document.createElement("td");
+    nameCell.textContent = data.currency_name;
+    var bankRateCell = document.createElement("td");
+    bankRateCell.textContent = data.bank_rate;
+    var exchangeRateCell = document.createElement("td");
+    exchangeRateCell.textContent = data.exchange_rate;
+    row.appendChild(nameCell);
+    row.appendChild(bankRateCell);
+    row.appendChild(exchangeRateCell);
+    return row;
+  }
 
   loadMoreButton.addEventListener("click", function () {
     loader.style.display = "block";
@@ -22,18 +56,9 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
       var fragment = document.createDocumentFragment();
       remainingData.forEach(function (data) {
-        var row = document.createElement("tr");
-        var nameCell = document.createElement("td");
-        nameCell.textContent = data.currency_name;
-        var bankRateCell = document.createElement("td");
-        bankRateCell.textContent = data.bank_rate;
-        var exchangeRateCell = document.createElement("td");
-        exchangeRateCell.textContent = data.exchange_rate;
-        row.appendChild(nameCell);
-        row.appendChild(bankRateCell);
-        row.appendChild(exchangeRateCell);
-        fragment.appendChild(row);
+        var row = createRow(data);
         allRows.push(row);
+        fragment.appendChild(row);
       });
 
       currencyTableBody.appendChild(fragment);
@@ -98,9 +123,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function updatePaginationButtons() {
     var buttons = paginationContainer.querySelectorAll(".page-btn");
-    buttons[0].disabled = currentPage === 1;
-    buttons[1].disabled =
-      currentPage === Math.ceil(allRows.length / rowsPerPage);
+    if (buttons.length > 0) {
+      buttons[0].disabled = currentPage === 1;
+      buttons[1].disabled =
+        currentPage === Math.ceil(allRows.length / rowsPerPage);
+    }
   }
 
   function displayPage(page, filteredRows) {
@@ -120,9 +147,5 @@ document.addEventListener("DOMContentLoaded", function () {
     updatePaginationButtons();
   }
 
-  // Initial load
-  loader.style.display = "none";
-  tableContainer.style.display = "block";
-  displayPage(1);
-  setupPagination(initialRows);
+  fetchData();
 });
