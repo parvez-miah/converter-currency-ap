@@ -46,7 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
           prevPageButton.disabled = page === 1;
           nextPageButton.disabled = !data.data.has_more;
           pageIndicator.textContent = `Page ${page}`;
-          noResults.style.display = data.data.html ? "none" : "block";
+          if (search === "") {
+            noResults.style.display = data.data.html ? "none" : "block";
+          } else {
+            noResults.style.display = "none";
+          }
         }
         isFetching = false;
         loader.style.display = "none";
@@ -74,6 +78,13 @@ document.addEventListener("DOMContentLoaded", function () {
   searchBar.addEventListener("input", function () {
     currentPage = 1;
     debouncedFetchData(currentPage, searchBar.value);
+  });
+
+  searchBar.addEventListener("change", function () {
+    if (searchBar.value === "") {
+      currentPage = 1;
+      fetchData(currentPage, "");
+    }
   });
 
   fetchData();
