@@ -38,7 +38,6 @@ function cc_currency_table() {
             <tbody id="currencyTableBody"></tbody>
         </table>
         <div id="pagination"></div>
-        <button id="loadMore" style="display:none;">আরও দেখুন</button>
     </div>
     <p id="noResults" style="display:none;">ফলাফল পাওয়া যায়নি</p>
     <br>
@@ -71,8 +70,13 @@ function cc_fetch_currency_data() {
         set_transient('cached_currency_data', $currency_data, 12 * HOUR_IN_SECONDS);
     }
 
-    wp_send_json_success($currency_data);
+    // Return the first 6 rows initially
+    $initial_data = array_slice($currency_data, 0, 6);
+
+    wp_send_json_success([
+        'initial_data' => $initial_data,
+        'all_data' => $currency_data
+    ]);
 }
 add_action('wp_ajax_cc_fetch_currency_data', 'cc_fetch_currency_data');
 add_action('wp_ajax_nopriv_cc_fetch_currency_data', 'cc_fetch_currency_data');
-?>

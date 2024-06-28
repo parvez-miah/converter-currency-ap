@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let allRows = [];
   let filteredRows = [];
+  let initialLoaded = false;
   let currentPage = 1;
   const rowsPerPage = 6;
 
@@ -16,13 +17,27 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          const currencyData = data.data;
-          allRows = currencyData.map(createRow);
+          const initialData = data.data.initial_data;
+          const allData = data.data.all_data;
+
+          allRows = initialData.map(createRow);
           filteredRows = [...allRows];
           loader.style.display = "none";
           tableContainer.style.display = "block";
           displayPage(1);
           setupPagination();
+
+          // Load remaining data in the background
+          setTimeout(() => {
+            const remainingData = allData.slice(6);
+            remainingData.forEach((item) => {
+              const row = createRow(item);
+              allRows.push(row);
+            });
+            filteredRows = [...allRows];
+            initialLoaded = true;
+            setupPagination();
+          }, 0); // Adjust the timeout value if necessary
         }
       });
   }
@@ -33,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <td>${data.currency_name}</td>
           <td>${data.bank_rate}</td>
           <td>${data.exchange_rate}</td>
-        `;
+      `;
     return row;
   }
 
