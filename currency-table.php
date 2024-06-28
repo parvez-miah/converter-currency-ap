@@ -39,7 +39,7 @@ function cc_currency_table() {
         </table>
         <div id="pagination"></div>
     </div>
-    <p id="noResults" style="display:none;">ফলাফল পাওয়া যায়নি</p>
+    <p id="noResults" style="display:none;">দেশের নাম সঠিকভাবে লিখুন। এই নামে কোন ডাটা পাওয়া যায়নি..</p>
     <br>
     <script src="<?php echo plugin_dir_url(__FILE__); ?>js/currency-table.js"></script>
     <?php

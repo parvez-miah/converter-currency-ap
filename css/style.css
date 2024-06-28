@@ -207,7 +207,9 @@ textarea {
 
 .page-btn {
   margin: 0 2px;
-  padding: 5px 10px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 15px;
   cursor: pointer;
 }
 
@@ -243,27 +245,4 @@ textarea {
 }
 #noResults {
   color: red;
-}
-#loadMore {
-  display: block;
-  margin: 20px auto;
-  padding: 10px;
-}
-.cc-progress-bar-container {
-  width: 100%;
-  background-color: #f3f3f3;
-  margin-top: 20px;
-  height: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.cc-progress-bar {
-  width: 0;
-  height: 100%;
-  background-color: #4caf50;
-  text-align: center;
-  line-height: 20px;
-  color: white;
-  border-radius: 10px;
 }

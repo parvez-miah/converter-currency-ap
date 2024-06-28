@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (pageCount > 1) {
       const prevButton = createPaginationButton(
-        "← পূর্ববর্তী",
+        "← পূর্ববর্তী টাকার রেট",
         currentPage === 1,
         () => {
           if (currentPage > 1) displayPage(currentPage - 1);
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
       );
 
       const nextButton = createPaginationButton(
-        "পরবর্তী →",
+        "পরবর্তী টাকার রেট →",
         currentPage === pageCount,
         () => {
           if (currentPage < pageCount) displayPage(currentPage + 1);
