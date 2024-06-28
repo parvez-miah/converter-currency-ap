@@ -83,9 +83,10 @@ document.addEventListener("DOMContentLoaded", function () {
   searchBar.addEventListener("change", function () {
     if (searchBar.value === "") {
       currentPage = 1;
-      fetchData(currentPage, "");
+      fetchData(currentPage, ""); // Fetch default data immediately when input is cleared
     }
   });
 
+  // Initial fetch of default data
   fetchData();
 });
