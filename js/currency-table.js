@@ -11,6 +11,18 @@ document.addEventListener("DOMContentLoaded", function () {
   const rowsPerPage = 7;
   let isFetching = false;
 
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
+
   function fetchData(page = 1, search = "") {
     if (isFetching) return;
     isFetching = true;
@@ -45,21 +57,23 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
+  const debouncedFetchData = debounce(fetchData, 300);
+
   prevPageButton.addEventListener("click", function () {
     if (currentPage > 1) {
       currentPage--;
-      fetchData(currentPage, searchBar.value);
+      debouncedFetchData(currentPage, searchBar.value);
     }
   });
 
   nextPageButton.addEventListener("click", function () {
     currentPage++;
-    fetchData(currentPage, searchBar.value);
+    debouncedFetchData(currentPage, searchBar.value);
   });
 
   searchBar.addEventListener("input", function () {
     currentPage = 1;
-    fetchData(currentPage, searchBar.value);
+    debouncedFetchData(currentPage, searchBar.value);
   });
 
   fetchData();
