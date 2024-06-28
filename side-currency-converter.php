@@ -1,5 +1,4 @@
 <?php
-
 function cc_currency_converter($atts) {
     $atts = shortcode_atts(array(
         'from' => 'USD',
@@ -35,20 +34,20 @@ function cc_currency_converter($atts) {
             <div class="main-div">
                 <div>
                     <div class="sub-amount-box">
-                        <label for="cc-amount">Amount</label>
+                        <label for="cc-amount">পরিমাণ</label>
                         <input type="number" id="cc-amount" value="1" min="1" />
                     </div>
                 </div>
                 <div class="sub-dropdown-column">
                     <div class="dropdown-main">
                         <div style="margin-right: 10px" class="cc-column">
-                            <label for="cc-from-currency">From</label>
+                            <label for="cc-from-currency">হতে</label>
                             <select id="cc-from-currency">
                                 <?php cc_currency_options($atts['from']); ?>
                             </select>
                         </div>
                         <div class="cc-column">
-                            <label for="cc-to-currency">To</label>
+                            <label for="cc-to-currency">যাওয়া</label>
                             <select id="cc-to-currency">
                                 <?php cc_currency_options($atts['to']); ?>
                             </select>
@@ -139,4 +138,5 @@ function cc_currency_converter($atts) {
     return $cached_html;
 }
 add_shortcode('currency_converter', 'cc_currency_converter');
+
 ?>

@@ -14,6 +14,7 @@ include_once(plugin_dir_path(__FILE__) . 'currency-table.php');
 include_once(plugin_dir_path(__FILE__) . 'side-currency-converter.php');
 include_once(plugin_dir_path(__FILE__) . 'currency-names.php');
 include_once(plugin_dir_path(__FILE__) . 'currency-table-names.php');
+include_once(plugin_dir_path(__FILE__) . 'currency-graph.php');
 
 // Enqueue necessary scripts and styles
 function cc_enqueue_scripts() {
@@ -27,6 +28,12 @@ function cc_enqueue_scripts() {
 }
 add_action('wp_enqueue_scripts', 'cc_enqueue_scripts');
 
+function load_amcharts() {
+    wp_enqueue_script('amcharts-core', 'https://cdn.amcharts.com/lib/4/core.js', array(), null, true);
+    wp_enqueue_script('amcharts-charts', 'https://cdn.amcharts.com/lib/4/charts.js', array(), null, true);
+    wp_enqueue_script('amcharts-animated', 'https://cdn.amcharts.com/lib/4/themes/animated.js', array(), null, true);
+}
+add_action('wp_enqueue_scripts', 'load_amcharts');
 
 // Fetch and cache conversion rate
 function get_conversion_rate($from_currency, $to_currency) {
