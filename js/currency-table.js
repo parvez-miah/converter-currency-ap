@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
       body: new URLSearchParams({
         page: page,
         per_page: rowsPerPage,
-        search: search,
+        search: search.trim(), // Trim leading and trailing spaces from search
       }),
     })
       .then((response) => response.json())
@@ -46,8 +46,9 @@ document.addEventListener("DOMContentLoaded", function () {
           prevPageButton.disabled = page === 1;
           nextPageButton.disabled = !data.data.has_more;
           pageIndicator.textContent = `Page ${page}`;
-          if (search === "") {
-            noResults.style.display = data.data.html ? "none" : "block";
+          if (data.data.html.trim() === "") {
+            noResults.style.display = "block";
+            currencyTableBody.innerHTML = ""; // Clear table body if no results
           } else {
             noResults.style.display = "none";
           }
@@ -81,9 +82,12 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   searchBar.addEventListener("change", function () {
-    if (searchBar.value === "") {
+    const searchText = searchBar.value.trim();
+    if (searchText === "") {
       currentPage = 1;
       fetchData(currentPage, ""); // Fetch default data immediately when input is cleared
+    } else {
+      debouncedFetchData(currentPage, searchText); // Fetch data for non-empty search
     }
   });
 
