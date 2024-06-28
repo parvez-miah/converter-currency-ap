@@ -1,126 +1,75 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const loader = document.querySelector(".cc-loader");
-  const tableContainer = document.querySelector(".cc-table-container");
   const searchBar = document.getElementById("searchBar");
   const noResults = document.getElementById("noResults");
   const currencyTableBody = document.getElementById("currencyTableBody");
-  const paginationContainer = document.getElementById("pagination");
+  const prevPageButton = document.getElementById("prevPage");
+  const nextPageButton = document.getElementById("nextPage");
+  const pageIndicator = document.getElementById("pageIndicator");
 
-  let allRows = [];
-  let filteredRows = [];
-  let initialLoaded = false;
   let currentPage = 1;
-  const rowsPerPage = 6;
+  const rowsPerPage = 5;
+  let isFetching = false;
 
-  function fetchData() {
-    fetch(ccAjax.ajax_url + "?action=cc_fetch_currency_data")
+  function fetchData(page = 1) {
+    if (isFetching) return;
+    isFetching = true;
+
+    fetch(ccAjax.ajax_url + "?action=load_currency_table", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        page: page,
+        per_page: rowsPerPage,
+      }),
+    })
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          const initialData = data.data.initial_data;
-          const allData = data.data.all_data;
-
-          allRows = initialData.map(createRow);
-          filteredRows = [...allRows];
-          loader.style.display = "none";
-          tableContainer.style.display = "block";
-          displayPage(1);
-          setupPagination();
-
-          // Load remaining data in the background
-          setTimeout(() => {
-            const remainingData = allData.slice(6);
-            remainingData.forEach((item) => {
-              const row = createRow(item);
-              allRows.push(row);
-            });
-            filteredRows = [...allRows];
-            initialLoaded = true;
-            setupPagination();
-          }, 0); // Adjust the timeout value if necessary
+          currencyTableBody.innerHTML = data.data.html;
+          prevPageButton.disabled = page === 1;
+          nextPageButton.disabled = !data.data.has_more;
+          pageIndicator.textContent = `Page ${page}`;
+          isFetching = false;
         }
+      })
+      .catch(() => {
+        isFetching = false;
       });
   }
 
-  function createRow(data) {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-          <td>${data.currency_name}</td>
-          <td>${data.bank_rate}</td>
-          <td>${data.exchange_rate}</td>
-      `;
-    return row;
-  }
-
-  function setupPagination() {
-    paginationContainer.innerHTML = "";
-    const pageCount = Math.ceil(filteredRows.length / rowsPerPage);
-
-    if (pageCount > 1) {
-      const prevButton = createPaginationButton(
-        "← পূর্ববর্তী টাকার রেট",
-        currentPage === 1,
-        () => {
-          if (currentPage > 1) displayPage(currentPage - 1);
-        }
-      );
-
-      const nextButton = createPaginationButton(
-        "পরবর্তী টাকার রেট →",
-        currentPage === pageCount,
-        () => {
-          if (currentPage < pageCount) displayPage(currentPage + 1);
-        }
-      );
-
-      paginationContainer.appendChild(prevButton);
-      paginationContainer.appendChild(nextButton);
+  prevPageButton.addEventListener("click", function () {
+    if (currentPage > 1) {
+      currentPage--;
+      fetchData(currentPage);
     }
-  }
+  });
 
-  function createPaginationButton(text, disabled, onClick) {
-    const button = document.createElement("button");
-    button.innerText = text;
-    button.classList.add("page-btn");
-    button.disabled = disabled;
-    button.addEventListener("click", onClick);
-    return button;
-  }
+  nextPageButton.addEventListener("click", function () {
+    currentPage++;
+    fetchData(currentPage);
+  });
 
-  function displayPage(page) {
-    currentPage = page;
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-
-    currencyTableBody.innerHTML = "";
-    filteredRows
-      .slice(start, end)
-      .forEach((row) => currencyTableBody.appendChild(row));
-    updatePaginationButtons();
-  }
-
-  function updatePaginationButtons() {
-    const buttons = paginationContainer.querySelectorAll(".page-btn");
-    if (buttons.length > 0) {
-      buttons[0].disabled = currentPage === 1;
-      buttons[1].disabled =
-        currentPage === Math.ceil(filteredRows.length / rowsPerPage);
-    }
-  }
+  fetchData();
 
   searchBar.addEventListener("input", filterTable);
 
   function filterTable() {
     const filter = searchBar.value.toLowerCase();
-    filteredRows = allRows.filter((row) => {
+    const rows = currencyTableBody.querySelectorAll("tr");
+    let hasVisibleRows = false;
+
+    rows.forEach((row) => {
       const cell = row.querySelector("td:first-child");
-      return cell ? cell.textContent.toLowerCase().includes(filter) : false;
+      if (cell && cell.textContent.toLowerCase().includes(filter)) {
+        row.style.display = "";
+        hasVisibleRows = true;
+      } else {
+        row.style.display = "none";
+      }
     });
 
-    noResults.style.display = filteredRows.length === 0 ? "block" : "none";
-    displayPage(1);
-    setupPagination();
+    noResults.style.display = hasVisibleRows ? "none" : "block";
   }
-
-  fetchData();
 });
