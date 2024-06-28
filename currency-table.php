@@ -21,6 +21,7 @@ function get_permanent_currency_names() {
     }
     return $currencies;
 }
+
 function render_currency_table() {
     ob_start();
     ?>
@@ -35,18 +36,20 @@ function render_currency_table() {
         </thead>
         <tbody id="currencyTableBody">
             <!-- Initial rows will be loaded here -->
-            <tr style="height: 50px;"></tr>
-             <!-- Placeholder row to reserve space -->
+            <tr style="height: 50px;"></tr> <!-- Placeholder row to reserve space -->
         </tbody>
     </table>
     <p id="noResults" class="no-results" style="display:none;">দেশের নাম সঠিকভাবে লিখুন। এই নামে কোন ডাটা পাওয়া যায়নি..</p>
-   
+    
+    <div id="loader" style="display: none; color:green; text-align: center; margin-bottom: 10px">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
     <div id="pagination" class="pagination">
         <button id="prevPage" class="pagination-button" disabled> ◀️পূর্ববর্তী টাকার রেট</button>
         <span id="pageIndicator">Page 1</span>
         <button id="nextPage" class="pagination-button">পরবর্তী টাকার রেট▶️ </button>
     </div>
-     <script src="<?php echo plugin_dir_url(__FILE__); ?>js/currency-table.js" defer></script>
+    
+   
+    <script src="<?php echo plugin_dir_url(__FILE__); ?>js/currency-table.js" defer></script>
     <?php
     return ob_get_clean();
 }
@@ -70,7 +73,7 @@ function cc_load_currency_table() {
             $bank_rate = $rate;
             $exchange_rate = $bank_rate * 1.02;
 
-            $html .= '<tr>
+            $html .= '<tr style="height: 50px;">
                 <td>' . esc_html($currency_name) . '</td>
                 <td>' . esc_html(format_bengali_currency($bank_rate)) . '</td>
                 <td>' . esc_html(format_bengali_currency($exchange_rate)) . '</td>

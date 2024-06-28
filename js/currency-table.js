@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const prevPageButton = document.getElementById("prevPage");
   const nextPageButton = document.getElementById("nextPage");
   const pageIndicator = document.getElementById("pageIndicator");
+  const loader = document.getElementById("loader");
 
   let currentPage = 1;
   const rowsPerPage = 7;
@@ -13,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function fetchData(page = 1) {
     if (isFetching) return;
     isFetching = true;
+    loader.style.display = "block";
 
     fetch(ccAjax.ajax_url + "?action=load_currency_table", {
       method: "POST",
@@ -31,11 +33,13 @@ document.addEventListener("DOMContentLoaded", function () {
           prevPageButton.disabled = page === 1;
           nextPageButton.disabled = !data.data.has_more;
           pageIndicator.textContent = `Page ${page}`;
-          isFetching = false;
         }
+        isFetching = false;
+        loader.style.display = "none";
       })
       .catch(() => {
         isFetching = false;
+        loader.style.display = "none";
       });
   }
 
