@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const rowsPerPage = 7;
   let isFetching = false;
 
-  function fetchData(page = 1) {
+  function fetchData(page = 1, search = "") {
     if (isFetching) return;
     isFetching = true;
     loader.style.display = "block";
@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
       body: new URLSearchParams({
         page: page,
         per_page: rowsPerPage,
+        search: search,
       }),
     })
       .then((response) => response.json())
@@ -33,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
           prevPageButton.disabled = page === 1;
           nextPageButton.disabled = !data.data.has_more;
           pageIndicator.textContent = `Page ${page}`;
+          noResults.style.display = data.data.html ? "none" : "block";
         }
         isFetching = false;
         loader.style.display = "none";
@@ -46,34 +48,19 @@ document.addEventListener("DOMContentLoaded", function () {
   prevPageButton.addEventListener("click", function () {
     if (currentPage > 1) {
       currentPage--;
-      fetchData(currentPage);
+      fetchData(currentPage, searchBar.value);
     }
   });
 
   nextPageButton.addEventListener("click", function () {
     currentPage++;
-    fetchData(currentPage);
+    fetchData(currentPage, searchBar.value);
+  });
+
+  searchBar.addEventListener("input", function () {
+    currentPage = 1;
+    fetchData(currentPage, searchBar.value);
   });
 
   fetchData();
-
-  searchBar.addEventListener("input", filterTable);
-
-  function filterTable() {
-    const filter = searchBar.value.toLowerCase();
-    const rows = currencyTableBody.querySelectorAll("tr");
-    let hasVisibleRows = false;
-
-    rows.forEach((row) => {
-      const cell = row.querySelector("td:first-child");
-      if (cell && cell.textContent.toLowerCase().includes(filter)) {
-        row.style.display = "";
-        hasVisibleRows = true;
-      } else {
-        row.style.display = "none";
-      }
-    });
-
-    noResults.style.display = hasVisibleRows ? "none" : "block";
-  }
 });
