@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const pageIndicator = document.getElementById("pageIndicator");
 
   let currentPage = 1;
-  const rowsPerPage = 5;
+  const rowsPerPage = 7;
   let isFetching = false;
 
   function fetchData(page = 1) {

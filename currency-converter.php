@@ -162,6 +162,16 @@ function cc_register_shortcodes_menu() {
         'cc-clear-currency-table-cache',
         'cc_clear_currency_table_cache_page'
     );
+
+    // Add Clear All Table Data submenu
+    add_submenu_page(
+        'cc-shortcodes',
+        'Clear All Table Data',
+        'Clear All Table Data',
+        'manage_options',
+        'cc-clear-all-table-data',
+        'cc_clear_all_table_data_page'
+    );
 }
 add_action('admin_menu', 'cc_register_shortcodes_menu');
 
@@ -223,6 +233,29 @@ function cc_clear_currency_table_cache_page() {
     <?php
 }
 
+function cc_clear_all_table_data_page() {
+    ?>
+    <div class="wrap">
+        <h1>Clear All Table Data</h1>
+        <p>Click the button below to clear all data from the Currency Table:</p>
+        <button id="cc-clear-all-table-data-button" class="button button-primary">Clear All Table Data</button>
+    </div>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('#cc-clear-all-table-data-button').on('click', function() {
+            $.post(ajaxurl, { action: 'cc_clear_all_table_data' }, function(response) {
+                if (response.success) {
+                    alert('All table data cleared successfully!');
+                } else {
+                    alert('Failed to clear all table data.');
+                }
+            });
+        });
+    });
+    </script>
+    <?php
+}
+
 function cc_clear_cache() {
     global $wpdb;
     $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_cc_%'");
@@ -235,6 +268,15 @@ function cc_clear_currency_table_cache() {
     wp_send_json_success();
 }
 
+function cc_clear_all_table_data() {
+    global $wpdb;
+    // Clear all transient data related to the currency table
+    $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_cc_currency_%'");
+    $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_cc_currency_%'");
+    wp_send_json_success();
+}
+
 add_action('wp_ajax_cc_clear_cache', 'cc_clear_cache');
 add_action('wp_ajax_cc_clear_currency_table_cache', 'cc_clear_currency_table_cache');
+add_action('wp_ajax_cc_clear_all_table_data', 'cc_clear_all_table_data');
 ?>

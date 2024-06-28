@@ -35,16 +35,18 @@ function render_currency_table() {
         </thead>
         <tbody id="currencyTableBody">
             <!-- Initial rows will be loaded here -->
-            <tr style="height: 50px;"></tr> <!-- Placeholder row to reserve space -->
+            <tr style="height: 50px;"></tr>
+             <!-- Placeholder row to reserve space -->
         </tbody>
     </table>
-    <div id="pagination" class="pagination">
-        <button id="prevPage" class="pagination-button" disabled>Prev</button>
-        <span id="pageIndicator">Page 1</span>
-        <button id="nextPage" class="pagination-button">Next</button>
-    </div>
     <p id="noResults" class="no-results" style="display:none;">দেশের নাম সঠিকভাবে লিখুন। এই নামে কোন ডাটা পাওয়া যায়নি..</p>
-    <script src="<?php echo plugin_dir_url(__FILE__); ?>js/currency-table.js" defer></script>
+   
+    <div id="pagination" class="pagination">
+        <button id="prevPage" class="pagination-button" disabled> > পূর্ববর্তী টাকার রেট</button>
+        <span id="pageIndicator">Page 1</span>
+        <button id="nextPage" class="pagination-button">পরবর্তী টাকার রেট < </button>
+    </div>
+     <script src="<?php echo plugin_dir_url(__FILE__); ?>js/currency-table.js" defer></script>
     <?php
     return ob_get_clean();
 }
