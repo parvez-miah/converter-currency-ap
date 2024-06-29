@@ -1,6 +1,7 @@
 <?php
 
 // Include the currency names file
+// Include the currency names file
 require_once plugin_dir_path(__FILE__) . 'currency-names.php';
 
 function historical_currency_graph($atts) {
@@ -52,91 +53,110 @@ function historical_currency_graph($atts) {
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        am4core.ready(function() {
-            am4core.useTheme(am4themes_animated);
+        // Load amCharts libraries asynchronously
+        const loadScript = (src, integrity, callback) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.integrity = integrity;
+            script.crossOrigin = "anonymous";
+            script.onload = callback;
+            document.head.appendChild(script);
+        };
 
-            var chart = am4core.create("currency-chart", am4charts.XYChart);
-            chart.scrollbarX = new am4core.Scrollbar();
-            
-            var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        const initChart = () => {
+            am4core.ready(function() {
+                am4core.useTheme(am4themes_animated);
 
-            var series = chart.series.push(new am4charts.LineSeries());
-            series.dataFields.valueY = "value";
-            series.dataFields.dateX = "date";
-            series.strokeWidth = 2;
-            series.minBulletDistance = 15;
-
-            // Add tooltip with exchange rate
-            series.tooltipText = "{dateX.formatDate('yyyy-MM-dd')} (ব্যাংক রেট: [bold]{valueY}[/]) (এক্সচেঞ্জ রেট: [bold]{adjustedRate}[/])";
-            series.tooltip.pointerOrientation = "vertical";
-            series.tooltip.background.cornerRadius = 20;
-            series.tooltip.background.fillOpacity = 0.5;
-            series.tooltip.label.padding(12, 12, 12, 12);
-
-            chart.cursor = new am4charts.XYCursor();
-            chart.cursor.xAxis = dateAxis;
-            chart.cursor.snapToSeries = series;
-
-            chart.scrollbarY = new am4core.Scrollbar();
-            chart.scrollbarY.parent = chart.leftAxesContainer;
-            chart.scrollbarY.toBack();
-
-            chart.scrollbarX = new am4core.Scrollbar();
-            chart.scrollbarX.parent = chart.bottomAxesContainer;
-
-            // Fetch and update the chart data
-            const fetchCurrencyData = async (from, to, period) => {
-                let cacheKey = `currency_data_${from}_${to}_${period}`;
-                let cachedData = <?php echo json_encode(get_transient('currency_data_' . $atts['from'] . '_' . $atts['to'] . '_' . $atts['period'])); ?>;
-
-                if (cachedData) {
-                    chart.data = JSON.parse(cachedData);
-                    return;
-                }
-
-                let endDate = new Date();
-                let startDate = new Date();
+                var chart = am4core.create("currency-chart", am4charts.XYChart);
+                chart.scrollbarX = new am4core.Scrollbar();
                 
-                switch (period) {
-                    case '1M':
-                        startDate.setMonth(startDate.getMonth() - 1);
-                        break;
-                    case '3M':
-                        startDate.setMonth(startDate.getMonth() - 3);
-                        break;
-                    case '6M':
-                        startDate.setMonth(startDate.getMonth() - 6);
-                        break;
-                    case '1Y':
-                        startDate.setFullYear(startDate.getFullYear() - 1);
-                        break;
-                }
+                var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+                var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
-                let start = startDate.toISOString().split('T')[0];
-                let end = endDate.toISOString().split('T')[0];
+                var series = chart.series.push(new am4charts.LineSeries());
+                series.dataFields.valueY = "value";
+                series.dataFields.dateX = "date";
+                series.strokeWidth = 2;
+                series.minBulletDistance = 15;
 
-                let response = await fetch(`https://currencies.apps.grandtrunk.net/getrange/${start}/${end}/${from}/${to}`);
-                let data = await response.text();
-                let lines = data.split('\n');
-                let chartData = lines.map(line => {
-                    let [date, value] = line.split(' ');
-                    let floatVal = parseFloat(value);
-                    return { date: new Date(date), value: floatVal, adjustedRate: (floatVal * 1.02).toFixed(4) };
-                }).filter(item => !isNaN(item.value));
+                // Add tooltip with exchange rate
+                series.tooltipText = "{dateX.formatDate('yyyy-MM-dd')} (ব্যাংক রেট: [bold]{valueY}[/]) (এক্সচেঞ্জ রেট: [bold]{adjustedRate}[/])";
+                series.tooltip.pointerOrientation = "vertical";
+                series.tooltip.background.cornerRadius = 20;
+                series.tooltip.background.fillOpacity = 0.5;
+                series.tooltip.label.padding(12, 12, 12, 12);
 
-                chart.data = chartData.reverse();
-                setTransient(cacheKey, JSON.stringify(chartData.reverse()), 24 * HOUR_IN_SECONDS);
-            };
+                chart.cursor = new am4charts.XYCursor();
+                chart.cursor.xAxis = dateAxis;
+                chart.cursor.snapToSeries = series;
 
-            // Initial fetch
-            fetchCurrencyData("<?php echo esc_js($atts['from']); ?>", "<?php echo esc_js($atts['to']); ?>", "<?php echo esc_js($atts['period']); ?>");
+                chart.scrollbarY = new am4core.Scrollbar();
+                chart.scrollbarY.parent = chart.leftAxesContainer;
+                chart.scrollbarY.toBack();
 
-            document.getElementById('updateGraph').addEventListener('click', () => {
-                let from = document.getElementById('fromCurrency').value;
-                let to = document.getElementById('toCurrency').value;
-                let period = document.getElementById('period').value;
-                fetchCurrencyData(from, to, period);
+                chart.scrollbarX = new am4core.Scrollbar();
+                chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+                // Fetch and update the chart data
+                const fetchCurrencyData = async (from, to, period) => {
+                    let cacheKey = `currency_data_${from}_${to}_${period}`;
+                    let cachedData = <?php echo json_encode(get_transient('currency_data_' . $atts['from'] . '_' . $atts['to'] . '_' . $atts['period'])); ?>;
+
+                    if (cachedData) {
+                        chart.data = JSON.parse(cachedData);
+                        return;
+                    }
+
+                    let endDate = new Date();
+                    let startDate = new Date();
+                    
+                    switch (period) {
+                        case '1M':
+                            startDate.setMonth(startDate.getMonth() - 1);
+                            break;
+                        case '3M':
+                            startDate.setMonth(startDate.getMonth() - 3);
+                            break;
+                        case '6M':
+                            startDate.setMonth(startDate.getMonth() - 6);
+                            break;
+                        case '1Y':
+                            startDate.setFullYear(startDate.getFullYear() - 1);
+                            break;
+                    }
+
+                    let start = startDate.toISOString().split('T')[0];
+                    let end = endDate.toISOString().split('T')[0];
+
+                    let response = await fetch(`https://currencies.apps.grandtrunk.net/getrange/${start}/${end}/${from}/${to}`);
+                    let data = await response.text();
+                    let lines = data.split('\n');
+                    let chartData = lines.map(line => {
+                        let [date, value] = line.split(' ');
+                        let floatVal = parseFloat(value);
+                        return { date: new Date(date), value: floatVal, adjustedRate: (floatVal * 1.02).toFixed(4) };
+                    }).filter(item => !isNaN(item.value));
+
+                    chart.data = chartData.reverse();
+                    setTransient(cacheKey, JSON.stringify(chartData.reverse()), 24 * HOUR_IN_SECONDS);
+                };
+
+                // Initial fetch
+                fetchCurrencyData("<?php echo esc_js($atts['from']); ?>", "<?php echo esc_js($atts['to']); ?>", "<?php echo esc_js($atts['period']); ?>");
+
+                document.getElementById('updateGraph').addEventListener('click', () => {
+                    let from = document.getElementById('fromCurrency').value;
+                    let to = document.getElementById('toCurrency').value;
+                    let period = document.getElementById('period').value;
+                    fetchCurrencyData(from, to, period);
+                });
+            });
+        };
+
+        // Load amCharts libraries with integrity and callback
+        loadScript("https://www.amcharts.com/lib/4/core.js", "sha384-DnTq...foo", () => {
+            loadScript("https://www.amcharts.com/lib/4/charts.js", "sha384-DnTq...bar", () => {
+                loadScript("https://www.amcharts.com/lib/4/themes/animated.js", "sha384-DnTq...baz", initChart);
             });
         });
     });
@@ -158,85 +178,104 @@ function historical_currency_graph_only($atts) {
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        am4core.ready(function() {
-            am4core.useTheme(am4themes_animated);
+        // Load amCharts libraries asynchronously
+        const loadScript = (src, integrity, callback) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.integrity = integrity;
+            script.crossOrigin = "anonymous";
+            script.onload = callback;
+            document.head.appendChild(script);
+        };
 
-            var chart = am4core.create("currency-chart", am4charts.XYChart);
-            chart.scrollbarX = new am4core.Scrollbar();
-            
-            var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        const initChart = () => {
+            am4core.ready(function() {
+                am4core.useTheme(am4themes_animated);
 
-            var series = chart.series.push(new am4charts.LineSeries());
-            series.dataFields.valueY = "value";
-            series.dataFields.dateX = "date";
-            series.strokeWidth = 2;
-            series.minBulletDistance = 15;
-
-            // Add tooltip with exchange rate
-            series.tooltipText = "{dateX.formatDate('yyyy-MM-dd')} (ব্যাংক রেট: [bold]{valueY}[/]) (এক্সচেঞ্জ রেট: [bold]{adjustedRate}[/])";
-            series.tooltip.pointerOrientation = "vertical";
-            series.tooltip.background.cornerRadius = 20;
-            series.tooltip.background.fillOpacity = 0.5;
-            series.tooltip.label.padding(12, 12, 12, 12);
-
-            chart.cursor = new am4charts.XYCursor();
-            chart.cursor.xAxis = dateAxis;
-            chart.cursor.snapToSeries = series;
-
-            chart.scrollbarY = new am4core.Scrollbar();
-            chart.scrollbarY.parent = chart.leftAxesContainer;
-            chart.scrollbarY.toBack();
-
-            chart.scrollbarX = new am4core.Scrollbar();
-            chart.scrollbarX.parent = chart.bottomAxesContainer;
-
-            // Fetch and update the chart data
-            const fetchCurrencyData = async (from, to, period) => {
-                let cacheKey = `currency_data_${from}_${to}_${period}`;
-                let cachedData = <?php echo json_encode(get_transient('currency_data_' . $atts['from'] . '_' . $atts['to'] . '_' . $atts['period'])); ?>;
-
-                if (cachedData) {
-                    chart.data = JSON.parse(cachedData);
-                    return;
-                }
-
-                let endDate = new Date();
-                let startDate = new Date();
+                var chart = am4core.create("currency-chart", am4charts.XYChart);
+                chart.scrollbarX = new am4core.Scrollbar();
                 
-                switch (period) {
-                    case '1M':
-                        startDate.setMonth(startDate.getMonth() - 1);
-                        break;
-                    case '3M':
-                        startDate.setMonth(startDate.getMonth() - 3);
-                        break;
-                    case '6M':
-                        startDate.setMonth(startDate.getMonth() - 6);
-                        break;
-                    case '1Y':
-                        startDate.setFullYear(startDate.getFullYear() - 1);
-                        break;
-                }
+                var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+                var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
-                let start = startDate.toISOString().split('T')[0];
-                let end = endDate.toISOString().split('T')[0];
+                var series = chart.series.push(new am4charts.LineSeries());
+                series.dataFields.valueY = "value";
+                series.dataFields.dateX = "date";
+                series.strokeWidth = 2;
+                series.minBulletDistance = 15;
 
-                let response = await fetch(`https://currencies.apps.grandtrunk.net/getrange/${start}/${end}/${from}/${to}`);
-                let data = await response.text();
-                let lines = data.split('\n');
-                let chartData = lines.map(line => {
-                    let [date, value] = line.split(' ');
-                    let floatVal = parseFloat(value);
-                    return { date: new Date(date), value: floatVal, adjustedRate: (floatVal * 1.02).toFixed(4) };
-                }).filter(item => !isNaN(item.value));
+                // Add tooltip with exchange rate
+                series.tooltipText = "{dateX.formatDate('yyyy-MM-dd')} (ব্যাংক রেট: [bold]{valueY}[/]) (এক্সচেঞ্জ রেট: [bold]{adjustedRate}[/])";
+                series.tooltip.pointerOrientation = "vertical";
+                series.tooltip.background.cornerRadius = 20;
+                series.tooltip.background.fillOpacity = 0.5;
+                series.tooltip.label.padding(12, 12, 12, 12);
 
-                chart.data = chartData.reverse();
-                setTransient(cacheKey, JSON.stringify(chartData.reverse()), 24 * HOUR_IN_SECONDS);
-            };
+                chart.cursor = new am4charts.XYCursor();
+                chart.cursor.xAxis = dateAxis;
+                chart.cursor.snapToSeries = series;
 
-            // Initial fetch
-            fetchCurrencyData("<?php echo esc_js($atts['from']); ?>", "<?php echo esc_js($atts['to']); ?>", "<?php echo esc_js($atts['period']); ?>");
+                chart.scrollbarY = new am4core.Scrollbar();
+                chart.scrollbarY.parent = chart.leftAxesContainer;
+                chart.scrollbarY.toBack();
+
+                chart.scrollbarX = new am4core.Scrollbar();
+                chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+                // Fetch and update the chart data
+                const fetchCurrencyData = async (from, to, period) => {
+                    let cacheKey = `currency_data_${from}_${to}_${period}`;
+                    let cachedData = <?php echo json_encode(get_transient('currency_data_' . $atts['from'] . '_' . $atts['to'] . '_' . $atts['period'])); ?>;
+
+                    if (cachedData) {
+                        chart.data = JSON.parse(cachedData);
+                        return;
+                    }
+
+                    let endDate = new Date();
+                    let startDate = new Date();
+                    
+                    switch (period) {
+                        case '1M':
+                            startDate.setMonth(startDate.getMonth() - 1);
+                            break;
+                        case '3M':
+                            startDate.setMonth(startDate.getMonth() - 3);
+                            break;
+                        case '6M':
+                            startDate.setMonth(startDate.getMonth() - 6);
+                            break;
+                        case '1Y':
+                            startDate.setFullYear(startDate.getFullYear() - 1);
+                            break;
+                    }
+
+                    let start = startDate.toISOString().split('T')[0];
+                    let end = endDate.toISOString().split('T')[0];
+
+                    let response = await fetch(`https://currencies.apps.grandtrunk.net/getrange/${start}/${end}/${from}/${to}`);
+                    let data = await response.text();
+                    let lines = data.split('\n');
+                    let chartData = lines.map(line => {
+                        let [date, value] = line.split(' ');
+                        let floatVal = parseFloat(value);
+                        return { date: new Date(date), value: floatVal, adjustedRate: (floatVal * 1.02).toFixed(4) };
+                    }).filter(item => !isNaN(item.value));
+
+                    chart.data = chartData.reverse();
+                    setTransient(cacheKey, JSON.stringify(chartData.reverse()), 24 * HOUR_IN_SECONDS);
+                };
+
+                // Initial fetch
+                fetchCurrencyData("<?php echo esc_js($atts['from']); ?>", "<?php echo esc_js($atts['to']); ?>", "<?php echo esc_js($atts['period']); ?>");
+            });
+        };
+
+        // Load amCharts libraries with integrity and callback
+        loadScript("https://www.amcharts.com/lib/4/core.js", "sha384-DnTq...foo", () => {
+            loadScript("https://www.amcharts.com/lib/4/charts.js", "sha384-DnTq...bar", () => {
+                loadScript("https://www.amcharts.com/lib/4/themes/animated.js", "sha384-DnTq...baz", initChart);
+            });
         });
     });
     </script>
