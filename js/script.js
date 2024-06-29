@@ -1,19 +1,17 @@
 jQuery(document).ready(function ($) {
   const bengaliNums = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
 
-  const convertToBengali = (num) => {
-    return num.toString().replace(/[0-9]/g, (w) => bengaliNums[+w]);
-  };
+  const convertToBengali = (num) =>
+    num.toString().replace(/[0-9]/g, (w) => bengaliNums[+w]);
 
-  const addCommasToNumber = (num) => {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
+  const addCommasToNumber = (num) =>
+    num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
   const formatBengaliCurrency = (amount) => {
-    const parts = amount.toFixed(2).split(".");
-    const taka = convertToBengali(addCommasToNumber(parts[0]));
-    const poisa = convertToBengali(parts[1]);
-    return `${taka} টাকা ${poisa} পয়সা`;
+    const [taka, poisa] = amount.toFixed(2).split(".");
+    return `${convertToBengali(
+      addCommasToNumber(taka)
+    )} টাকা ${convertToBengali(poisa)} পয়সা`;
   };
 
   const updateConversion = () => {
@@ -45,39 +43,33 @@ jQuery(document).ready(function ($) {
         $("#cc-loader").hide();
         if (response.success) {
           const quantities = [1, 5, 20, 50, 100];
-          let bankRates = "";
+          const bankRates = quantities
+            .map(
+              (quantity) => `
+            <tr>
+              <td>${convertToBengali(quantity)} ${
+                response.data.from_currency_name
+              }</td>
+              <td>${formatBengaliCurrency(
+                response.data.bank_rate * quantity
+              )}</td>
+              <td>${formatBengaliCurrency(
+                response.data.exchange_rate * quantity
+              )}</td>
+            </tr>
+          `
+            )
+            .join("");
 
-          quantities.forEach((quantity) => {
-            const bankRateFormatted = formatBengaliCurrency(
-              response.data.bank_rate * quantity
-            );
-            const exchangeRateFormatted = formatBengaliCurrency(
-              response.data.exchange_rate * quantity
-            );
-            bankRates += `
-              <tr>
-                <td>${convertToBengali(quantity)} ${
-              response.data.from_currency_name
-            }</td>
-                <td>${bankRateFormatted}</td>
-                <td>${exchangeRateFormatted}</td>
-              </tr>`;
-          });
-
-          const convertedAmountFormatted = formatBengaliCurrency(
-            response.data.converted_amount
-          );
-
-          const resultHtml = `
+          $("#cc-result").html(`
             ${convertToBengali(amount)} ${response.data.from_currency_name} = ${
             response.data.to_currency_name
-          } ${convertedAmountFormatted}।
-          `;
-          $("#cc-result").html(resultHtml);
+          } ${formatBengaliCurrency(response.data.converted_amount)}।
+          `);
 
           $("#cc-rate-table tbody").html(bankRates);
 
-          const additionalInfo = `
+          $("#cc-additional-info").html(`
             <p>এখান থেকে আপনি জেনে নিতে পারবেন, ${
               response.data.from_currency_name
             } থেকে ${
@@ -97,9 +89,9 @@ jQuery(document).ready(function ($) {
           }?</h3>
             <p>১ ${
               response.data.from_currency_name
-            } সমান হবে, ${convertedAmountFormatted} ${
-            response.data.to_currency_name
-          }।</p>
+            } সমান হবে, ${formatBengaliCurrency(
+            response.data.converted_amount
+          )} ${response.data.to_currency_name}।</p>
             <h3>৫ ${response.data.from_currency_name} সমান কত ${
             response.data.to_currency_name
           } হবে? </h3>
@@ -113,15 +105,7 @@ jQuery(document).ready(function ($) {
             } থেকে ${
             response.data.to_currency_name
           } ক্ষেত্রে আজকে টাকা রেট কত টাকা হবে সেই সংক্রান্ত তথ্য।</p>
-          `;
-          $("#cc-additional-info").html(additionalInfo);
-
-          const reverseRateFormatted = formatBengaliCurrency(
-            response.data.reverse_rate
-          );
-          const reverseConvertedAmountFormatted = formatBengaliCurrency(
-            response.data.reverse_converted_amount
-          );
+          `);
 
           $("#cc-additional-info").append(`
             <h2>বিপরীত মুদ্রা রেট</h2>
@@ -129,16 +113,16 @@ jQuery(document).ready(function ($) {
             response.data.from_currency_name
           }:</h4>
             <ul>
-              <li> <p>১ ${
+              <li><p>১ ${
                 response.data.to_currency_name
-              } = ${reverseRateFormatted} ${
+              } = ${formatBengaliCurrency(response.data.reverse_rate)} ${
             response.data.from_currency_name
           }</p></li>
-              <li> <p>${convertToBengali(amount)} ${
+              <li><p>${convertToBengali(amount)} ${
             response.data.to_currency_name
-          } = ${reverseConvertedAmountFormatted} ${
-            response.data.from_currency_name
-          }</p></li>
+          } = ${formatBengaliCurrency(
+            response.data.reverse_converted_amount
+          )} ${response.data.from_currency_name}</p></li>
             </ul>
           `);
 
@@ -151,11 +135,10 @@ jQuery(document).ready(function ($) {
           $("#cc-stats-30days").html(
             formatBengaliCurrency(response.data.historical_rates["30days"])
           );
-          const increasedRate = formatBengaliCurrency(
-            response.data.exchange_rate
-          );
           $("#cc-increased-rate").html(
-            `<b>এক্সচেঞ্জ রেট</b> : ${response.data.from_currency_name} = ${response.data.to_currency_name} ${increasedRate}`
+            `<b>এক্সচেঞ্জ রেট</b> : ${response.data.from_currency_name} = ${
+              response.data.to_currency_name
+            } ${formatBengaliCurrency(response.data.exchange_rate)}`
           );
         } else {
           $("#cc-result").html("Error: " + response.data);

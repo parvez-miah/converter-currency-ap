@@ -13,19 +13,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const rowsPerPage = 7;
   let isFetching = false;
 
-  function debounce(func, wait) {
+  const debounce = (func, wait) => {
     let timeout;
-    return function (...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
+    return (...args) => {
       clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
+      timeout = setTimeout(() => func.apply(this, args), wait);
     };
-  }
+  };
 
-  function fetchData(page = 1, search = "") {
+  const fetchData = (page = 1, search = "") => {
     if (isFetching) return;
     isFetching = true;
     loader.style.display = "block";
@@ -38,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
       body: new URLSearchParams({
         page: page,
         per_page: rowsPerPage,
-        search: search.trim(), // Trim leading and trailing spaces from search
+        search: search.trim(),
       }),
     })
       .then((response) => response.json())
@@ -58,37 +54,36 @@ document.addEventListener("DOMContentLoaded", function () {
         isFetching = false;
         loader.style.display = "none";
       });
-  }
+  };
 
   const debouncedFetchData = debounce(fetchData, 300);
 
-  prevPageButton.addEventListener("click", function () {
+  prevPageButton.addEventListener("click", () => {
     if (currentPage > 1) {
       currentPage--;
       debouncedFetchData(currentPage, searchBar.value);
     }
   });
 
-  nextPageButton.addEventListener("click", function () {
+  nextPageButton.addEventListener("click", () => {
     currentPage++;
     debouncedFetchData(currentPage, searchBar.value);
   });
 
-  searchBar.addEventListener("input", function () {
+  searchBar.addEventListener("input", () => {
     currentPage = 1;
     debouncedFetchData(currentPage, searchBar.value);
   });
 
-  searchBar.addEventListener("change", function () {
+  searchBar.addEventListener("change", () => {
     const searchText = searchBar.value.trim();
     if (searchText === "") {
       currentPage = 1;
-      fetchData(currentPage, ""); // Fetch default data immediately when input is cleared
+      fetchData(currentPage, "");
     } else {
-      debouncedFetchData(currentPage, searchText); // Fetch data for non-empty search
+      debouncedFetchData(currentPage, searchText);
     }
   });
 
-  // Initial fetch of default data
   fetchData();
 });

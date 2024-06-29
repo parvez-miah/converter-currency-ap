@@ -1,8 +1,7 @@
 <?php
 function render_specific_currency_table() {
-    // Return HTML structure for the currency table
     $html = '
-    <input type="text" id="specificSearchBar" class="search-bar" placeholder="দেশের নাম সার্চ করুন...">
+    <input type="text" id="specificSearchBar" class="search-bar" placeholder="দেশের নাম সার্চ করুন..." autocomplete="off">
     <table id="specific-currency-table" class="cc-currency-table">
         <thead>
             <tr>
@@ -11,9 +10,7 @@ function render_specific_currency_table() {
                 <th>এক্সচেঞ্জ রেট</th>
             </tr>
         </thead>
-        <tbody id="specificCurrencyTableBody">
-            <!-- Initial rows will be loaded here -->
-        </tbody>
+        <tbody id="specificCurrencyTableBody"></tbody>
     </table>
     <p id="specificNoResults" class="no-results" style="display:none;">দেশের নাম সঠিকভাবে লিখুন। এই নামে কোন ডাটা পাওয়া যায়নি..</p>
     <div id="specificLoader" style="display: none; color:green; text-align: center; margin-bottom: 10px">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
@@ -22,13 +19,13 @@ function render_specific_currency_table() {
         <span id="specificPageIndicator">Page 1</span>
         <button id="specificNextPage" class="pagination-button">পরবর্তী টাকার রেট▶️ </button>
     </div>
-    <script src="' . plugin_dir_url(__FILE__) . 'js/specific-currency-table.js" defer></script>';
+    <script src="' . plugin_dir_url(__FILE__) . 'js/specific-currency-table.min.js" defer></script>';
     return $html;
 }
 
 function cc_load_specific_currency_table() {
     $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
-    $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 5;
+    $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 7;
     $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
 
     $currencies = array(
@@ -45,7 +42,6 @@ function cc_load_specific_currency_table() {
         'JOD' => 'জর্ডান'
     );
 
-    // Filter currencies based on search input
     if ($search) {
         $currencies = array_filter($currencies, function($currency_name) use ($search) {
             return stripos($currency_name, $search) !== false;
@@ -72,7 +68,6 @@ function cc_load_specific_currency_table() {
         }
     }
 
-    // Return the HTML and pagination info
     wp_send_json_success(array(
         'html' => $html,
         'has_more' => $has_more,
