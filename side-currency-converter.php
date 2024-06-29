@@ -5,9 +5,6 @@ function cc_currency_converter($atts) {
         'from' => 'USD',
         'to' => 'BDT'
     ), $atts);
-
-    header("Access-Control-Allow-Origin: *"); // Add this line
-
     // Get today's date and convert it to Bengali
     $today_date = date('Y-m-d');
     $months = array(

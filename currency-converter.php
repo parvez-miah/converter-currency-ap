@@ -15,6 +15,7 @@ include_once(plugin_dir_path(__FILE__) . 'side-currency-converter.php');
 include_once(plugin_dir_path(__FILE__) . 'currency-names.php');
 include_once(plugin_dir_path(__FILE__) . 'currency-table-names.php');
 include_once(plugin_dir_path(__FILE__) . 'currency-graph.php');
+include_once(plugin_dir_path(__FILE__) . 'specefic-table.php');
 
 // Enqueue necessary scripts and styles
 function cc_enqueue_scripts() {
@@ -24,6 +25,7 @@ function cc_enqueue_scripts() {
     }
     wp_enqueue_script('cc-scripts-main', plugins_url('js/script.js', __FILE__), array('jquery'), null, true);
     wp_enqueue_script('cc-currency-table', plugins_url('js/currency-table.js', __FILE__), array('jquery'), null, true);
+    wp_enqueue_script('cc-currency-table', plugins_url('js/specific-currency-table.js', __FILE__), array('jquery'), null, true);
     wp_localize_script('cc-currency-table', 'ccAjax', array('ajax_url' => admin_url('admin-ajax.php')));
 }
 add_action('wp_enqueue_scripts', 'cc_enqueue_scripts');

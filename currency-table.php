@@ -96,4 +96,5 @@ function cc_currency_table_shortcode() {
     return render_currency_table();
 }
 add_shortcode('currency_table', 'cc_currency_table_shortcode');
+
 ?>
