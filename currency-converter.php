@@ -25,11 +25,12 @@ function cc_enqueue_scripts() {
     }
     wp_enqueue_script('cc-scripts-main', plugins_url('js/script.js', __FILE__), array('jquery'), null, true);
     wp_enqueue_script('cc-currency-table', plugins_url('js/currency-table.js', __FILE__), array('jquery'), null, true);
-    wp_enqueue_script('cc-currency-table', plugins_url('js/specific-currency-table.js', __FILE__), array('jquery'), null, true);
+    wp_enqueue_script('cc-specific-currency-table', plugins_url('js/specific-currency-table.js', __FILE__), array('jquery'), null, true);
     wp_localize_script('cc-currency-table', 'ccAjax', array('ajax_url' => admin_url('admin-ajax.php')));
 }
 add_action('wp_enqueue_scripts', 'cc_enqueue_scripts');
 
+// Load AmCharts library
 function load_amcharts() {
     wp_enqueue_script('amcharts-core', 'https://cdn.amcharts.com/lib/4/core.js', array(), null, true);
     wp_enqueue_script('amcharts-charts', 'https://cdn.amcharts.com/lib/4/charts.js', array(), null, true);
@@ -173,6 +174,8 @@ function cc_display_shortcodes_page() {
         <code>[currency_converter]</code>
         <code>[currency_converter from="BDT" to="USD"]</code>
         <code>[currency_table]</code>
+        <code>[historical_currency_graph from="USD" to="INR" period="3M"]</code>
+        <code>[specific_currency_table]</code>
     </div>
     <?php
 }
@@ -200,7 +203,6 @@ function cc_clear_cache_page() {
     <?php
 }
 
-
 function cc_clear_cache() {
     global $wpdb;
     $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_cc_%'");
@@ -209,6 +211,4 @@ function cc_clear_cache() {
 }
 
 add_action('wp_ajax_cc_clear_cache', 'cc_clear_cache');
-add_action('wp_ajax_cc_clear_currency_table_cache', 'cc_clear_currency_table_cache');
-add_action('wp_ajax_cc_clear_all_table_data', 'cc_clear_all_table_data');
 ?>

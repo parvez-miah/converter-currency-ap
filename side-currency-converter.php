@@ -42,13 +42,13 @@ function cc_currency_converter($atts) {
                 <div class="sub-dropdown-column">
                     <div class="dropdown-main">
                         <div style="margin-right: 10px" class="cc-column">
-                            <label for="cc-from-currency">হতে</label>
+                            <label for="cc-from-currency">From</label>
                             <select id="cc-from-currency">
                                 <?php cc_currency_options($atts['from']); ?>
                             </select>
                         </div>
                         <div class="cc-column">
-                            <label for="cc-to-currency">যাওয়া</label>
+                            <label for="cc-to-currency">To</label>
                             <select id="cc-to-currency">
                                 <?php cc_currency_options($atts['to']); ?>
                             </select>
