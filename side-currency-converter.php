@@ -117,10 +117,10 @@ function cc_currency_converter($atts) {
             </div>
         </div>
         
-        <script src="https://www.amcharts.com/lib/4/core.js" crossorigin="anonymous"></script>
-        <script src="https://www.amcharts.com/lib/4/charts.js" crossorigin="anonymous"></script>
-        <script src="https://www.amcharts.com/lib/4/themes/animated.js" crossorigin="anonymous"></script>
-        <script src="<?php echo plugin_dir_url(__FILE__); ?>graph-script.js" crossorigin="anonymous"></script>
+        <script src="https://www.amcharts.com/lib/4/core.js" defer crossorigin="anonymous"></script>
+        <script src="https://www.amcharts.com/lib/4/charts.js" defer crossorigin="anonymous"></script>
+        <script src="https://www.amcharts.com/lib/4/themes/animated.js" defer crossorigin="anonymous"></script>
+        <script src="<?php echo plugin_dir_url(__FILE__); ?>graph-script.js" defer crossorigin="anonymous"></script>
         <?php
         // Get the buffered content and clean the buffer
         $cached_html = ob_get_clean();
