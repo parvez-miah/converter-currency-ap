@@ -145,10 +145,109 @@ function historical_currency_graph($atts) {
     return ob_get_clean();
 }
 
+function historical_currency_graph_only($atts) {
+    $atts = shortcode_atts(array(
+        'from' => 'USD',
+        'to' => 'EUR',
+        'period' => '1M' // Default period 1 month
+    ), $atts);
+
+    ob_start();
+    ?>
+    <div id="currency-chart" style="width: 100%; height: 500px;"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        am4core.ready(function() {
+            am4core.useTheme(am4themes_animated);
+
+            var chart = am4core.create("currency-chart", am4charts.XYChart);
+            chart.scrollbarX = new am4core.Scrollbar();
+            
+            var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+            var series = chart.series.push(new am4charts.LineSeries());
+            series.dataFields.valueY = "value";
+            series.dataFields.dateX = "date";
+            series.strokeWidth = 2;
+            series.minBulletDistance = 15;
+
+            // Add tooltip with exchange rate
+            series.tooltipText = "{dateX.formatDate('yyyy-MM-dd')} (ব্যাংক রেট: [bold]{valueY}[/]) (এক্সচেঞ্জ রেট: [bold]{adjustedRate}[/])";
+            series.tooltip.pointerOrientation = "vertical";
+            series.tooltip.background.cornerRadius = 20;
+            series.tooltip.background.fillOpacity = 0.5;
+            series.tooltip.label.padding(12, 12, 12, 12);
+
+            chart.cursor = new am4charts.XYCursor();
+            chart.cursor.xAxis = dateAxis;
+            chart.cursor.snapToSeries = series;
+
+            chart.scrollbarY = new am4core.Scrollbar();
+            chart.scrollbarY.parent = chart.leftAxesContainer;
+            chart.scrollbarY.toBack();
+
+            chart.scrollbarX = new am4core.Scrollbar();
+            chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+            // Fetch and update the chart data
+            const fetchCurrencyData = async (from, to, period) => {
+                let cacheKey = `currency_data_${from}_${to}_${period}`;
+                let cachedData = <?php echo json_encode(get_transient('currency_data_' . $atts['from'] . '_' . $atts['to'] . '_' . $atts['period'])); ?>;
+
+                if (cachedData) {
+                    chart.data = JSON.parse(cachedData);
+                    return;
+                }
+
+                let endDate = new Date();
+                let startDate = new Date();
+                
+                switch (period) {
+                    case '1M':
+                        startDate.setMonth(startDate.getMonth() - 1);
+                        break;
+                    case '3M':
+                        startDate.setMonth(startDate.getMonth() - 3);
+                        break;
+                    case '6M':
+                        startDate.setMonth(startDate.getMonth() - 6);
+                        break;
+                    case '1Y':
+                        startDate.setFullYear(startDate.getFullYear() - 1);
+                        break;
+                }
+
+                let start = startDate.toISOString().split('T')[0];
+                let end = endDate.toISOString().split('T')[0];
+
+                let response = await fetch(`https://currencies.apps.grandtrunk.net/getrange/${start}/${end}/${from}/${to}`);
+                let data = await response.text();
+                let lines = data.split('\n');
+                let chartData = lines.map(line => {
+                    let [date, value] = line.split(' ');
+                    let floatVal = parseFloat(value);
+                    return { date: new Date(date), value: floatVal, adjustedRate: (floatVal * 1.02).toFixed(4) };
+                }).filter(item => !isNaN(item.value));
+
+                chart.data = chartData.reverse();
+                setTransient(cacheKey, JSON.stringify(chartData.reverse()), 24 * HOUR_IN_SECONDS);
+            };
+
+            // Initial fetch
+            fetchCurrencyData("<?php echo esc_js($atts['from']); ?>", "<?php echo esc_js($atts['to']); ?>", "<?php echo esc_js($atts['period']); ?>");
+        });
+    });
+    </script>
+    <?php
+    return ob_get_clean();
+}
+
 function setTransient($key, $value, $expiration) {
     set_transient($key, $value, $expiration);
 }
 
 add_shortcode('historical_currency_graph', 'historical_currency_graph');
+add_shortcode('historical_currency_graph_only', 'historical_currency_graph_only');
 ?>
-

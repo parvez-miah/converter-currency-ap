@@ -115,7 +115,7 @@ function cc_currency_converter($atts) {
         
         <!-- Insert Historical Currency Graph Here -->
         <div id="historical-graph-container">
-            <?php echo do_shortcode('[historical_currency_graph from="' . $atts['from'] . '" to="' . $atts['to'] . '" period="1M"]'); ?>
+            <?php echo do_shortcode('[historical_currency_graph_only from="' . $atts['from'] . '" to="' . $atts['to'] . '" period="1M"]'); ?>
         </div>
 
         <script>
@@ -123,7 +123,6 @@ function cc_currency_converter($atts) {
                 const fromCurrencyDropdown = document.getElementById('cc-from-currency');
                 const toCurrencyDropdown = document.getElementById('cc-to-currency');
                 const titleElement = document.getElementById('cc-title');
-                const graphContainer = document.getElementById('historical-graph-container');
 
                 function updateTitle() {
                     const fromCurrency = fromCurrencyDropdown.options[fromCurrencyDropdown.selectedIndex].text;
