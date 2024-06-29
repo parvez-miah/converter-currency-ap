@@ -6,6 +6,8 @@ function cc_currency_converter($atts) {
         'to' => 'BDT'
     ), $atts);
 
+    header("Access-Control-Allow-Origin: *"); // Add this line
+
     // Get today's date and convert it to Bengali
     $today_date = date('Y-m-d');
     $months = array(
@@ -119,10 +121,10 @@ function cc_currency_converter($atts) {
         
         <!-- Insert Historical Currency Graph Here -->
 
-        <script src="https://www.amcharts.com/lib/4/core.js"></script>
-        <script src="https://www.amcharts.com/lib/4/charts.js"></script>
-        <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-        <script src="<?php echo plugin_dir_url(__FILE__); ?>graph-script.js"></script>
+        <script src="https://www.amcharts.com/lib/4/core.js" crossorigin="anonymous"></script>
+        <script src="https://www.amcharts.com/lib/4/charts.js" crossorigin="anonymous"></script>
+        <script src="https://www.amcharts.com/lib/4/themes/animated.js" crossorigin="anonymous"></script>
+        <script src="<?php echo plugin_dir_url(__FILE__); ?>graph-script.js" crossorigin="anonymous"></script>
         <?php
         // Get the buffered content and clean the buffer
         $cached_html = ob_get_clean();
