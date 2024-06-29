@@ -42,13 +42,13 @@ function cc_currency_converter($atts) {
                 <div class="sub-dropdown-column">
                     <div class="dropdown-main">
                         <div style="margin-right: 10px" class="cc-column">
-                            <label for="cc-from-currency">হতে</label>
+                            <label for="cc-from-currency">From</label>
                             <select id="cc-from-currency">
                                 <?php cc_currency_options($atts['from']); ?>
                             </select>
                         </div>
                         <div class="cc-column">
-                            <label for="cc-to-currency">যাওয়া</label>
+                            <label for="cc-to-currency">To</label>
                             <select id="cc-to-currency">
                                 <?php cc_currency_options($atts['to']); ?>
                             </select>
@@ -82,7 +82,7 @@ function cc_currency_converter($atts) {
             </div>
             <br>
             <div>
-                <h3 id="cc-title">আজকের টাকার রেট : <?php echo $atts['from']; ?> হতে <?php echo $atts['to']; ?></h3>
+                <h3 id="cc-today-title">আজকের টাকার রেট : <?php echo $atts['from']; ?> হতে <?php echo $atts['to']; ?></h3>
             </div>
 
             <table id="cc-rate-table">
@@ -96,7 +96,7 @@ function cc_currency_converter($atts) {
                 <tbody></tbody>
             </table>
             <div>
-                <h3 id="cc-title">ঐতিহাসিক টাকার রেট : <?php echo $atts['from']; ?> হতে <?php echo $atts['to']; ?></h3>
+                <h3 id="cc-historical-title">ঐতিহাসিক টাকার রেট : <?php echo $atts['from']; ?> হতে <?php echo $atts['to']; ?></h3>
             </div>
             <div id="historical-graph-container">
             <?php echo do_shortcode('[historical_currency_graph_only from="' . $atts['from'] . '" to="' . $atts['to'] . '" period="1M"]'); ?>
@@ -126,6 +126,26 @@ function cc_currency_converter($atts) {
         <script src="https://www.amcharts.com/lib/4/charts.js"></script>
         <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
         <script src="<?php echo plugin_dir_url(__FILE__); ?>graph-script.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const fromCurrencySelect = document.getElementById('cc-from-currency');
+                const toCurrencySelect = document.getElementById('cc-to-currency');
+                const todayTitle = document.getElementById('cc-today-title');
+                const historicalTitle = document.getElementById('cc-historical-title');
+
+                function updateTitles() {
+                    const fromCurrencyText = fromCurrencySelect.options[fromCurrencySelect.selectedIndex].text;
+                    const toCurrencyText = toCurrencySelect.options[toCurrencySelect.selectedIndex].text;
+
+                    todayTitle.innerText = `আজকের টাকার রেট : ${fromCurrencyText} হতে ${toCurrencyText}`;
+                    historicalTitle.innerText = `ঐতিহাসিক টাকার রেট : ${fromCurrencyText} হতে ${toCurrencyText}`;
+                }
+
+                fromCurrencySelect.addEventListener('change', updateTitles);
+                toCurrencySelect.addEventListener('change', updateTitles);
+                updateTitles(); // Initial call to set the titles correctly
+            });
+        </script>
         <?php
         // Get the buffered content and clean the buffer
         $cached_html = ob_get_clean();
@@ -137,4 +157,5 @@ function cc_currency_converter($atts) {
     return $cached_html;
 }
 add_shortcode('currency_converter', 'cc_currency_converter');
+
 ?>
