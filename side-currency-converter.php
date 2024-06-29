@@ -84,6 +84,7 @@ function cc_currency_converter($atts) {
             <div>
                 <h3 id="cc-title">আজকের টাকার রেট : <?php echo $atts['from']; ?> হতে <?php echo $atts['to']; ?></h3>
             </div>
+
             <table id="cc-rate-table">
                 <thead>
                     <tr>
@@ -94,6 +95,12 @@ function cc_currency_converter($atts) {
                 </thead>
                 <tbody></tbody>
             </table>
+            <div>
+                <h3 id="cc-title">ঐতিহাসিক টাকার রেট : <?php echo $atts['from']; ?> হতে <?php echo $atts['to']; ?></h3>
+            </div>
+            <div id="historical-graph-container">
+            <?php echo do_shortcode('[historical_currency_graph_only from="' . $atts['from'] . '" to="' . $atts['to'] . '" period="1M"]'); ?>
+        </div>
             <div id="cc-additional-info"></div>
             <div id="cc-stats-table">
                 <h3>গত কিছুদিনের টাকার রেট</h3>
@@ -114,9 +121,7 @@ function cc_currency_converter($atts) {
         </div>
         
         <!-- Insert Historical Currency Graph Here -->
-        <div id="historical-graph-container">
-            <?php echo do_shortcode('[historical_currency_graph_only from="' . $atts['from'] . '" to="' . $atts['to'] . '" period="1M"]'); ?>
-        </div>
+        
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
