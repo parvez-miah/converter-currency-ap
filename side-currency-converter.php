@@ -76,7 +76,9 @@ function cc_currency_converter($atts) {
     </div>
 </div>
 
-
+<div id="historical-graph-container">
+            <?php echo do_shortcode('[historical_currency_graph_only from="' . $atts['from'] . '" to="' . $atts['to'] . '" period="1M"]'); ?>
+            </div>
 
             
             
@@ -94,9 +96,7 @@ function cc_currency_converter($atts) {
                 </thead>
                 <tbody></tbody>
             </table>
-            <div id="historical-graph-container">
-            <?php echo do_shortcode('[historical_currency_graph_only from="' . $atts['from'] . '" to="' . $atts['to'] . '" period="1M"]'); ?>
-            </div>
+            
             <div id="cc-additional-info"></div>
             <div id="cc-stats-table">
                 <h3>গত কিছুদিনের টাকার রেট</h3>

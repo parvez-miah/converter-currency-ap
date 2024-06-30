@@ -34,7 +34,7 @@ select,
   padding: 12px;
   color: rgb(20, 30, 55);
   background: none;
-  height: 60px;
+  height: 55px;
   font-size: 20px;
 }
 #cc-reverse {
@@ -60,11 +60,31 @@ label {
   border-radius: 5px;
   cursor: pointer;
   margin-top: 20px;
-  transition: background-color 0.3s;
   padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.rate-print-button button:hover {
+  background-color: black;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 .rate-showing {
   margin-top: 20px;
   font-weight: 500;
+}
+
+#cc-result {
+  border-bottom: 1px solid;
+}
+@media only screen and (max-width: 600px) {
+  .currency-converter-box {
+    display: inline-block;
+    align-items: center;
+  }
 }
