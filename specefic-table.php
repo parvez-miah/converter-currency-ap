@@ -19,11 +19,20 @@ function render_specific_currency_table() {
         <span id="specificPageIndicator">Page 1</span>
         <button id="specificNextPage" class="pagination-button">পরবর্তী টাকার রেট▶️ </button>
     </div>
-    <script src="' . plugin_dir_url(__FILE__) . 'js/specific-currency-table.min.js" defer></script>';
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/gh/your-repo/specific-currency-table.min.js" defer></script>'; // Use your CDN URL here
     return $html;
 }
 
 function cc_load_specific_currency_table() {
+    $cache_key = 'cc_specific_currency_table_' . md5(serialize($_POST));
+    $cache = get_transient($cache_key);
+
+    if ($cache) {
+        wp_send_json_success($cache);
+        return;
+    }
+
     $page = isset($_POST['page']) ? intval($_POST['page']) : 1;
     $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 7;
     $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
@@ -68,11 +77,15 @@ function cc_load_specific_currency_table() {
         }
     }
 
-    wp_send_json_success(array(
+    $response = array(
         'html' => $html,
         'has_more' => $has_more,
         'page' => $page
-    ));
+    );
+
+    set_transient($cache_key, $response, DAY_IN_SECONDS * 365); // Cache for one year
+
+    wp_send_json_success($response);
 }
 
 add_action('wp_ajax_load_specific_currency_table', 'cc_load_specific_currency_table');
@@ -82,5 +95,6 @@ function cc_specific_currency_table_shortcode() {
     return render_specific_currency_table();
 }
 add_shortcode('specific_currency_table', 'cc_specific_currency_table_shortcode');
+
 
 ?>
