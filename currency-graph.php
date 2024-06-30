@@ -1,6 +1,7 @@
 <?php
 
 // Include the currency names file
+// Include the currency names file
 require_once plugin_dir_path(__FILE__) . 'currency-names.php';
 
 function historical_currency_graph($atts) {
@@ -53,9 +54,11 @@ function historical_currency_graph($atts) {
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Load amCharts libraries asynchronously
-        const loadScript = (src, callback) => {
+        const loadScript = (src, integrity, callback) => {
             const script = document.createElement('script');
             script.src = src;
+            script.integrity = integrity;
+            script.crossOrigin = "anonymous";
             script.onload = callback;
             document.head.appendChild(script);
         };
@@ -150,10 +153,10 @@ function historical_currency_graph($atts) {
             });
         };
 
-        // Load amCharts libraries from CDN
-        loadScript("https://cdn.amcharts.com/lib/4/core.js", () => {
-            loadScript("https://cdn.amcharts.com/lib/4/charts.js", () => {
-                loadScript("https://cdn.amcharts.com/lib/4/themes/animated.js", initChart);
+        // Load amCharts libraries with integrity and callback
+        loadScript("https://www.amcharts.com/lib/4/core.js", "sha384-DnTq...foo", () => {
+            loadScript("https://www.amcharts.com/lib/4/charts.js", "sha384-DnTq...bar", () => {
+                loadScript("https://www.amcharts.com/lib/4/themes/animated.js", "sha384-DnTq...baz", initChart);
             });
         });
     });
@@ -176,9 +179,11 @@ function historical_currency_graph_only($atts) {
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Load amCharts libraries asynchronously
-        const loadScript = (src, callback) => {
+        const loadScript = (src, integrity, callback) => {
             const script = document.createElement('script');
             script.src = src;
+            script.integrity = integrity;
+            script.crossOrigin = "anonymous";
             script.onload = callback;
             document.head.appendChild(script);
         };
@@ -266,10 +271,10 @@ function historical_currency_graph_only($atts) {
             });
         };
 
-        // Load amCharts libraries from CDN
-        loadScript("https://cdn.amcharts.com/lib/4/core.js", () => {
-            loadScript("https://cdn.amcharts.com/lib/4/charts.js", () => {
-                loadScript("https://cdn.amcharts.com/lib/4/themes/animated.js", initChart);
+        // Load amCharts libraries with integrity and callback
+        loadScript("https://www.amcharts.com/lib/4/core.js", "sha384-DnTq...foo", () => {
+            loadScript("https://www.amcharts.com/lib/4/charts.js", "sha384-DnTq...bar", () => {
+                loadScript("https://www.amcharts.com/lib/4/themes/animated.js", "sha384-DnTq...baz", initChart);
             });
         });
     });
@@ -278,7 +283,10 @@ function historical_currency_graph_only($atts) {
     return ob_get_clean();
 }
 
-// Register the shortcodes
+function setTransient($key, $value, $expiration) {
+    set_transient($key, $value, $expiration);
+}
+
 add_shortcode('historical_currency_graph', 'historical_currency_graph');
 add_shortcode('historical_currency_graph_only', 'historical_currency_graph_only');
 ?>

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
   const searchBar = document.getElementById("specificSearchBar");
   const noResults = document.getElementById("specificNoResults");
   const currencyTableBody = document.getElementById(
@@ -21,45 +21,39 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   };
 
-  const updateUI = (data, page) => {
-    currencyTableBody.innerHTML = data.html;
-    prevPageButton.disabled = page === 1;
-    nextPageButton.disabled = !data.has_more;
-    pageIndicator.textContent = `Page ${page}`;
-    noResults.style.display = data.html.trim() === "" ? "block" : "none";
-  };
-
-  const fetchData = async (page = 1, search = "") => {
+  const fetchData = (page = 1, search = "") => {
     if (isFetching) return;
     isFetching = true;
     loader.style.display = "block";
 
-    try {
-      const response = await fetch(
-        ccAjax.ajax_url + "?action=load_specific_currency_table",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: new URLSearchParams({
-            page,
-            per_page: rowsPerPage,
-            search: search.trim(),
-          }),
+    fetch(ccAjax.ajax_url + "?action=load_specific_currency_table", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        page: page,
+        per_page: rowsPerPage,
+        search: search.trim(),
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          currencyTableBody.innerHTML = data.data.html;
+          prevPageButton.disabled = page === 1;
+          nextPageButton.disabled = !data.data.has_more;
+          pageIndicator.textContent = `Page ${page}`;
+          noResults.style.display =
+            data.data.html.trim() === "" ? "block" : "none";
         }
-      );
-      const data = await response.json();
-
-      if (data.success) {
-        updateUI(data.data, page);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      isFetching = false;
-      loader.style.display = "none";
-    }
+        isFetching = false;
+        loader.style.display = "none";
+      })
+      .catch(() => {
+        isFetching = false;
+        loader.style.display = "none";
+      });
   };
 
   const debouncedFetchData = debounce(fetchData, 300);

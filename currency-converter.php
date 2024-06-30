@@ -19,42 +19,22 @@ include_once(plugin_dir_path(__FILE__) . 'specefic-table.php');
 
 // Enqueue necessary scripts and styles
 function cc_enqueue_scripts() {
-    wp_enqueue_style('cc-styles', 'https://cdn.jsdelivr.net/gh/your-repo/css/style.min.css');
+    wp_enqueue_style('cc-styles', plugins_url('css/style.css', __FILE__));
     if (is_singular()) {
-        wp_enqueue_style('cc-print-styles', 'https://cdn.jsdelivr.net/gh/your-repo/css/print.min.css', array(), null, 'print');
+        wp_enqueue_style('cc-print-styles', plugins_url('css/print.css', __FILE__), array(), null, 'print');
     }
-
-    wp_enqueue_script('cc-scripts-main', 'https://cdn.jsdelivr.net/gh/your-repo/js/script.min.js', array('jquery'), null, true);
-    wp_enqueue_script('cc-currency-table', 'https://cdn.jsdelivr.net/gh/your-repo/js/currency-table.min.js', array('jquery'), null, true);
-    wp_enqueue_script('cc-specific-currency-table', 'https://cdn.jsdelivr.net/gh/your-repo/js/specific-currency-table.min.js', array('jquery'), null, true);
-
-    // Defer loading of scripts
-    add_filter('script_loader_tag', 'cc_add_defer_attribute', 10, 2);
-    add_filter('style_loader_tag', 'cc_add_async_attribute', 10, 2);
-
+    wp_enqueue_script('cc-scripts-main', plugins_url('js/script.js', __FILE__), array('jquery'), null, true);
+    wp_enqueue_script('cc-currency-table', plugins_url('js/currency-table.js', __FILE__), array('jquery'), null, true);
+    wp_enqueue_script('cc-specific-currency-table', plugins_url('js/specific-currency-table.js', __FILE__), array('jquery'), null, true);
     wp_localize_script('cc-currency-table', 'ccAjax', array('ajax_url' => admin_url('admin-ajax.php')));
 }
 add_action('wp_enqueue_scripts', 'cc_enqueue_scripts');
 
-function cc_add_defer_attribute($tag, $handle) {
-    if ('cc-scripts-main' === $handle || 'cc-currency-table' === $handle || 'cc-specific-currency-table' === $handle) {
-        return str_replace(' src', ' defer="defer" src', $tag);
-    }
-    return $tag;
-}
-
-function cc_add_async_attribute($tag, $handle) {
-    if ('cc-styles' === $handle || 'cc-print-styles' === $handle) {
-        return str_replace(' href', ' async="async" href', $tag);
-    }
-    return $tag;
-}
-
 // Load AmCharts library
 function load_amcharts() {
-    wp_enqueue_script('amcharts-core', 'https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/core.js', array(), null, true);
-    wp_enqueue_script('amcharts-charts', 'https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/charts.js', array(), null, true);
-    wp_enqueue_script('amcharts-animated', 'https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/themes/animated.js', array(), null, true);
+    wp_enqueue_script('amcharts-core', 'https://cdn.amcharts.com/lib/4/core.js', array(), null, true);
+    wp_enqueue_script('amcharts-charts', 'https://cdn.amcharts.com/lib/4/charts.js', array(), null, true);
+    wp_enqueue_script('amcharts-animated', 'https://cdn.amcharts.com/lib/4/themes/animated.js', array(), null, true);
 }
 add_action('wp_enqueue_scripts', 'load_amcharts');
 
