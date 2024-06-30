@@ -64,6 +64,23 @@ function cc_currency_converter($atts) {
             </select>
         </div>
     </div>
+    <!-- Bank Adjustment -->
+    <div class="bank-adjust">
+      <div class="title-bank-adjust">
+      <label for="cc-preview-rate">ব্যাংক রেট অ্যাডজাস্ট করুন</label>
+      </div>
+    <div class="cc-preview-rate">
+                      
+                        <select id="cc-preview-rate">
+                            <option value="0">0%</option>
+                            <option value="1">+1%</option>
+                            <option value="-1">-1%</option>
+                            <option value="2">+2%</option>
+                            <option value="-2">-2%</option>
+                            <!-- Add more options as needed -->
+                        </select>
+                    </div>
+    </div>
     <!-- Exchange Button -->
     <div class="rate-print-button" style="display: flex; align-items: center">
                     <button id="cc-convert" style="margin-right: 7px;">রেট দেখুন</button>
