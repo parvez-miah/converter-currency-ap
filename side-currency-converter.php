@@ -36,55 +36,46 @@ function cc_currency_converter($atts) {
         ob_start();
         ?>
         <div class="cc-container">
-            <div class="main-div">
-                <div>
-                    <div class="sub-amount-box">
-                        <label for="cc-amount">পরিমাণ</label>
-                        <input type="number" id="cc-amount" value="1" min="1" />
-                    </div>
-                </div>
-                <div class="sub-dropdown-column">
-                    <div class="dropdown-main">
-                        <div style="margin-right: 10px" class="cc-column">
-                            <label for="cc-from-currency">From</label>
-                            <select id="cc-from-currency">
-                                <?php cc_currency_options($atts['from']); ?>
-                            </select>
-                        </div>
-                       
-                    </div>
-                        <div class="cc-column">
-                            <label for="cc-to-currency">To</label>
-                            <select id="cc-to-currency">
-                                <?php cc_currency_options($atts['to']); ?>
-                            </select>
-                        </div>
-                    </div>
-                   
-                    <div class="cc-column">
-                        <label for="cc-preview-rate">ব্যাংক রেট অ্যাডজাস্ট করুন</label>
-                        <select id="cc-preview-rate">
-                            <option value="0">0%</option>
-                            <option value="1">+1%</option>
-                            <option value="-1">-1%</option>
-                            <option value="2">+2%</option>
-                            <option value="-2">-2%</option>
-                            <!-- Add more options as needed -->
-                        </select>
-                    </div>
-                </div>
-                <div class="rate-print-button" style="display: flex; align-items: center">
-                    <button id="cc-convert" style="margin-right: 7px;">🔄রেট দেখুন</button>
-                    <!-- <button id="cc-print">🖶 প্রিন্ট করুন</button> -->
-                </div>
-            </div>
-            
-            <div class="rate-showing">
-                <div id="cc-loader" style="display: none; color:green">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
+        <div class="full-currency-converter-box">
+    <div class="currency-converter-box">
+        <!-- Amount Box -->
+        <div class="sub-amount-box">
+            <label for="cc-amount">পরিমাণ</label>
+            <input type="number" id="cc-amount" value="1" min="1" />
+        </div>
+        <!-- From Box -->
+        <div class="cc-column">
+            <label for="cc-from-currency">From</label>
+            <select id="cc-from-currency">
+                <?php cc_currency_options($atts['from']); ?>
+            </select>
+        </div>
+        <!-- Reverse Button -->
+        <div>
+            <button id="cc-reverse">⇄</button>
+        </div>
+        <!-- To Box -->
+        <div class="cc-column">
+            <label for="cc-to-currency">To</label>
+            <select id="cc-to-currency">
+                <?php cc_currency_options($atts['to']); ?>
+            </select>
+        </div>
+    </div>
+    <!-- Exchnage Button -->
+    <div class="exchnage-button">
+        <button>টাকার রেট দেখুন</button>
+    </div>
+    <div class="rate-showing">
+                <div id="cc-loader" style="display: none; color:green">⌛টাকার রেট আপডেট হচ্ছে..... অপেক্ষা করুন!</div>
                 <div id="cc-result"></div>
                 <div id="cc-increased-rate"></div>
             </div>
-            <br>
+</div>
+
+
+            
+            
             <div>
                 <h3 id="cc-title">আজকের টাকার রেট : <?php echo $atts['from']; ?> হতে <?php echo $atts['to']; ?></h3>
             </div>
