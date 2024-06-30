@@ -51,60 +51,83 @@ document.addEventListener("DOMContentLoaded", function () {
           })
           .filter((item) => !isNaN(item.value));
 
-        updateGraph(chartData.reverse());
+        updateChart(chartData);
       });
   }
 
-  function updateGraph(data) {
-    am4core.ready(function () {
-      am4core.useTheme(am4themes_animated);
+  function updateChart(data) {
+    let chart = am4core.create("currency-chart", am4charts.XYChart);
+    chart.data = data;
 
-      var chart = am4core.create("currency-chart", am4charts.XYChart);
-      chart.data = data;
-      chart.scrollbarX = new am4core.Scrollbar();
+    let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+    let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
-      var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-      var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    let series = chart.series.push(new am4charts.LineSeries());
+    series.dataFields.valueY = "value";
+    series.dataFields.dateX = "date";
+    series.strokeWidth = 2;
+    series.minBulletDistance = 15;
 
-      var series = chart.series.push(new am4charts.LineSeries());
-      series.dataFields.valueY = "value";
-      series.dataFields.dateX = "date";
-      series.strokeWidth = 2;
-      series.minBulletDistance = 15;
+    series.tooltipText =
+      "{dateX.formatDate('yyyy-MM-dd')} (ব্যাংক রেট: [bold]{valueY}[/]) (এক্সচেঞ্জ রেট: [bold]{adjustedRate}[/])";
+    series.tooltip.pointerOrientation = "vertical";
+    series.tooltip.background.cornerRadius = 20;
+    series.tooltip.background.fillOpacity = 0.5;
+    series.tooltip.label.padding(12, 12, 12, 12);
 
-      series.tooltipText =
-        "{dateX.formatDate('yyyy-MM-dd')} (ব্যাংক রেট: [bold]{valueY}[/]) (এক্সচেঞ্জ রেট: [bold]{adjustedRate}[/])";
-      series.tooltip.pointerOrientation = "vertical";
-      series.tooltip.background.cornerRadius = 20;
-      series.tooltip.background.fillOpacity = 0.5;
-      series.tooltip.label.padding(12, 12, 12, 12);
+    chart.cursor = new am4charts.XYCursor();
+    chart.cursor.xAxis = dateAxis;
+    chart.cursor.snapToSeries = series;
 
-      chart.cursor = new am4charts.XYCursor();
-      chart.cursor.xAxis = dateAxis;
-      chart.cursor.snapToSeries = series;
-
-      chart.scrollbarY = new am4core.Scrollbar();
-      chart.legend = new am4charts.Legend();
-    });
+    chart.scrollbarX = new am4core.Scrollbar();
   }
 
-  function updateGraphContainer() {
+  document.getElementById("updateGraph").addEventListener("click", function () {
     const fromCurrency = fromCurrencyDropdown.value;
     const toCurrency = toCurrencyDropdown.value;
-    const period = "1M"; // Default period, can be changed based on user input if needed
-
+    const period = document.getElementById("cc-period").value;
     fetchCurrencyData(fromCurrency, toCurrency, period);
-  }
-
-  fromCurrencyDropdown.addEventListener("change", () => {
-    updateTitle();
-    updateGraphContainer();
   });
 
-  toCurrencyDropdown.addEventListener("change", () => {
-    updateTitle();
-    updateGraphContainer();
-  });
+  // Load amCharts scripts asynchronously
+  const loadScript = (src, integrity, callback) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.integrity = integrity;
+    script.crossOrigin = "anonymous";
+    script.onload = callback;
+    document.head.appendChild(script);
+  };
 
-  updateGraphContainer(); // Initial load
+  const initChart = () => {
+    am4core.ready(function () {
+      am4core.useTheme(am4themes_animated);
+      fetchCurrencyData(
+        fromCurrencyDropdown.value,
+        toCurrencyDropdown.value,
+        "1M"
+      );
+    });
+  };
+
+  loadScript(
+    "https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/core.js",
+    "sha384-DnTq...foo",
+    () => {
+      loadScript(
+        "https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/charts.js",
+        "sha384-DnTq...bar",
+        () => {
+          loadScript(
+            "https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/themes/animated.js",
+            "sha384-DnTq...baz",
+            initChart
+          );
+        }
+      );
+    }
+  );
+
+  fromCurrencyDropdown.addEventListener("change", updateTitle);
+  toCurrencyDropdown.addEventListener("change", updateTitle);
 });
