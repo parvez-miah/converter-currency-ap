@@ -28,19 +28,26 @@ function cc_load_specific_currency_table() {
     $per_page = isset($_POST['per_page']) ? intval($_POST['per_page']) : 7;
     $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
 
-    $currencies = array(
-        'BDT' => 'বাংলাদেশ',
-        'USD' => 'আমেরিকা',
-        'EUR' => 'ইউরোপ',
-        'GBP' => 'যুক্তরাজ্য',
-        'SAR' => 'সৌদি আরব',
-        'AED' => 'সংযুক্ত আরব আমিরাত',
-        'BHD' => 'বাহরাইন',
-        'OMR' => 'ওমান',
-        'QAR' => 'কাতার',
-        'KWD' => 'কুয়েত',
-        'JOD' => 'জর্ডান'
-    );
+    $transient_key = 'cached_specific_currency_table';
+    $currencies = get_transient($transient_key);
+
+    if ($currencies === false) {
+        $currencies = array(
+            'BDT' => 'বাংলাদেশ',
+            'USD' => 'আমেরিকা',
+            'EUR' => 'ইউরোপ',
+            'GBP' => 'যুক্তরাজ্য',
+            'SAR' => 'সৌদি আরব',
+            'AED' => 'সংযুক্ত আরব আমিরাত',
+            'BHD' => 'বাহরাইন',
+            'OMR' => 'ওমান',
+            'QAR' => 'কাতার',
+            'KWD' => 'কুয়েত',
+            'JOD' => 'জর্ডান'
+        );
+        // Cache for 10 years (effectively "forever")
+        set_transient($transient_key, $currencies, 10 * YEAR_IN_SECONDS);
+    }
 
     if ($search) {
         $currencies = array_filter($currencies, function($currency_name) use ($search) {
@@ -82,5 +89,4 @@ function cc_specific_currency_table_shortcode() {
     return render_specific_currency_table();
 }
 add_shortcode('specific_currency_table', 'cc_specific_currency_table_shortcode');
-
 ?>
