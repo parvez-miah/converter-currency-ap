@@ -1,0 +1,31 @@
+<label for="amount">Amount:</label>
+        <input type="number" id="amount" value="1.0" step="0.01">
+        
+        <label for="fromCurrency">From:</label>
+        <select id="fromCurrency">
+            <?php foreach ($currency_names as $currency_code => $currency_name): ?>
+                <option value="<?php echo esc_attr($currency_code); ?>" <?php selected($atts['from'], $currency_code); ?>>
+                    <?php echo esc_html($currency_name); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        
+        <label for="toCurrency">To:</label>
+        <select id="toCurrency">
+            <?php foreach ($currency_names as $currency_code => $currency_name): ?>
+                <option value="<?php echo esc_attr($currency_code); ?>" <?php selected($atts['to'], $currency_code); ?>>
+                    <?php echo esc_html($currency_name); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        
+        <label for="period">Period:</label>
+        <select id="period">
+            <option value="1M" <?php selected($atts['period'], '1M'); ?>>1 Month</option>
+            <option value="3M" <?php selected($atts['period'], '3M'); ?>>3 Months</option>
+            <option value="6M" <?php selected($atts['period'], '6M'); ?>>6 Months</option>
+            <option value="1Y" <?php selected($atts['period'], '1Y'); ?>>1 Year</option>
+        </select>
+        
+        <button id="updateGraph">Update Graph</button>
+    </div>

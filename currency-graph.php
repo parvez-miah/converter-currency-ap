@@ -19,10 +19,18 @@ function historical_currency_graph($atts) {
     ob_start();
     ?>
     <div>
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" value="1.0" step="0.01">
-        
-        <label for="fromCurrency">From:</label>
+
+    <div class="full-currency-converter-box">
+<div class="currency-converter-box">
+    <!-- Amount -->
+   <div>
+   <label for="amount">পরিমাণ:</label>
+   <input type="number" id="amount" value="1.0" step="0.01">
+   </div>
+    <!-- From -->
+
+    <div>
+    <label for="fromCurrency">From:</label>
         <select id="fromCurrency">
             <?php foreach ($currency_names as $currency_code => $currency_name): ?>
                 <option value="<?php echo esc_attr($currency_code); ?>" <?php selected($atts['from'], $currency_code); ?>>
@@ -30,8 +38,11 @@ function historical_currency_graph($atts) {
                 </option>
             <?php endforeach; ?>
         </select>
-        
-        <label for="toCurrency">To:</label>
+    </div>
+
+    <!-- to -->
+     <div>
+     <label for="toCurrency">To:</label>
         <select id="toCurrency">
             <?php foreach ($currency_names as $currency_code => $currency_name): ?>
                 <option value="<?php echo esc_attr($currency_code); ?>" <?php selected($atts['to'], $currency_code); ?>>
@@ -39,17 +50,25 @@ function historical_currency_graph($atts) {
                 </option>
             <?php endforeach; ?>
         </select>
-        
-        <label for="period">Period:</label>
+     </div>
+</div>
+
+<div>
+<label for="period">সময়সীমা:</label>
         <select id="period">
             <option value="1M" <?php selected($atts['period'], '1M'); ?>>1 Month</option>
             <option value="3M" <?php selected($atts['period'], '3M'); ?>>3 Months</option>
             <option value="6M" <?php selected($atts['period'], '6M'); ?>>6 Months</option>
             <option value="1Y" <?php selected($atts['period'], '1Y'); ?>>1 Year</option>
         </select>
-        
-        <button id="updateGraph">Update Graph</button>
+</div>
+<br>
+<div class="rate-print-button">
+<button id="updateGraph">গ্রাফ দেখুন</button>
+</div>
+
     </div>
+        
 
     <div id="currency-chart" style="width: 100%; height: 500px;"></div>
 
