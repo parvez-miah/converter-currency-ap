@@ -1,4 +1,8 @@
 <?php
+
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 function cc_currency_converter($atts) {
     $atts = shortcode_atts(array(
         'from' => 'USD',

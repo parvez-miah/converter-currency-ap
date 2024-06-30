@@ -87,7 +87,6 @@ label {
 
 .rate-showing {
   margin-top: 20px;
-  font-weight: 600;
 }
 
 .bank-adjust {
@@ -101,6 +100,15 @@ label {
   margin-left: 10px;
 }
 
+#cc-result {
+  color: #01a7dd;
+  font-weight: 600;
+}
+
+#cc-increased-rate {
+  font-weight: 500;
+  color: #000000;
+}
 /* Table and Pagination Part */
 
 .cc-table-container {
