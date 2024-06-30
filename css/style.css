@@ -1,5 +1,16 @@
+:root {
+  --main-color: #41305e;
+  --hover-color: #5733ff;
+  --background-color: #fff;
+  --border-color: #ccc;
+  --text-color: #333;
+  --highlight-color: #007bff;
+  --ast-border-color: #ccc; /* Assuming same as border-color */
+  --ast-comment-inputs-background: #fff; /* Assuming same as background-color */
+}
+
 .full-currency-converter-box {
-  padding: 80px;
+  padding: 60px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
     rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
     rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
@@ -12,18 +23,20 @@
   justify-content: space-between;
 }
 
-select {
+select,
+#cc-amount {
   width: 100%;
-  border-width: 1px;
+  border-width: 2px;
   border-style: solid;
-  border-color: rgb(221, 221, 221);
+  border-color: rgb(196, 189, 189);
   border-radius: 6px;
   box-shadow: rgba(0, 17, 51, 0.05) 0px 3px 15px;
   padding: 12px;
   color: rgb(20, 30, 55);
   background: none;
+  height: 60px;
+  font-size: 20px;
 }
-
 #cc-reverse {
   margin-top: 30px;
   margin-left: 20px;
@@ -32,21 +45,26 @@ select {
   color: #061eff;
   font-size: 21px;
   border-radius: 70px;
+  font-weight: 900;
 }
 
-.exchnage-button button {
-  background-color: white;
-  color: rgb(0, 108, 224);
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: 2px solid rgb(0, 108, 224);
-  transition: all 0.2s ease-in-out 0s;
-  margin-top: 20px;
+label {
+  font-weight: bold;
+  font-size: 17px;
 }
-.rate-showing {
-  margin: 10px 0;
-  padding: 15px;
-  font-size: 18px;
+
+.rate-print-button button {
+  background-color: var(--main-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
   margin-top: 20px;
+  transition: background-color 0.3s;
+  padding: 15px;
+}
+
+.rate-showing {
+  margin-top: 20px;
+  font-weight: 500;
 }

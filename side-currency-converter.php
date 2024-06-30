@@ -37,6 +37,8 @@ function cc_currency_converter($atts) {
         ?>
         <div class="cc-container">
         <div class="full-currency-converter-box">
+    <!-- Navigation Bar -->
+    
     <div class="currency-converter-box">
         <!-- Amount Box -->
         <div class="sub-amount-box">
@@ -62,16 +64,18 @@ function cc_currency_converter($atts) {
             </select>
         </div>
     </div>
-    <!-- Exchnage Button -->
-    <div class="exchnage-button">
-        <button>টাকার রেট দেখুন</button>
-    </div>
+    <!-- Exchange Button -->
+    <div class="rate-print-button" style="display: flex; align-items: center">
+                    <button id="cc-convert" style="margin-right: 7px;">রেট দেখুন</button>
+                    <button id="cc-print">প্রিন্ট করুন</button>
+                </div>
     <div class="rate-showing">
-                <div id="cc-loader" style="display: none; color:green">⌛টাকার রেট আপডেট হচ্ছে..... অপেক্ষা করুন!</div>
-                <div id="cc-result"></div>
-                <div id="cc-increased-rate"></div>
-            </div>
+        <div id="cc-loader" style="display: none; color:green">⌛টাকার রেট আপডেট হচ্ছে..... অপেক্ষা করুন!</div>
+        <div id="cc-result"></div>
+        <div id="cc-increased-rate"></div>
+    </div>
 </div>
+
 
 
             
