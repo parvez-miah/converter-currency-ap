@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajker Takar Rate
 Description: A simple currency converter that fetches data from Google Finance and caches it.
-Version: 12.0.0
+Version: 12.0.1
 Author: Ajker Takar Rate
 */
 
@@ -23,20 +23,19 @@ function cc_enqueue_scripts() {
     if (is_singular()) {
         wp_enqueue_style('cc-print-styles', plugins_url('css/print.css', __FILE__), array(), null, 'print');
     }
-    wp_enqueue_script('cc-scripts-main', plugins_url('js/script.js', __FILE__), array('jquery'), null, true);
-    wp_enqueue_script('cc-currency-table', plugins_url('js/currency-table.js', __FILE__), array('jquery'), null, true);
-    wp_enqueue_script('cc-specific-currency-table', plugins_url('js/specific-currency-table.js', __FILE__), array('jquery'), null, true);
+
+    // Enqueue CDN versions of jQuery and amCharts
+    wp_enqueue_script('jquery-cdn', 'https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js', array(), null, true);
+    wp_enqueue_script('amcharts-core', 'https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/core.js', array(), null, true);
+    wp_enqueue_script('amcharts-charts', 'https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/charts.js', array(), null, true);
+    wp_enqueue_script('amcharts-animated', 'https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/themes/animated.js', array(), null, true);
+
+    wp_enqueue_script('cc-scripts-main', plugins_url('js/script.js', __FILE__), array('jquery-cdn'), null, true);
+    wp_enqueue_script('cc-currency-table', plugins_url('js/currency-table.js', __FILE__), array('jquery-cdn'), null, true);
+    wp_enqueue_script('cc-specific-currency-table', plugins_url('js/specific-currency-table.js', __FILE__), array('jquery-cdn'), null, true);
     wp_localize_script('cc-currency-table', 'ccAjax', array('ajax_url' => admin_url('admin-ajax.php')));
 }
 add_action('wp_enqueue_scripts', 'cc_enqueue_scripts');
-
-// Load AmCharts library
-function load_amcharts() {
-    wp_enqueue_script('amcharts-core', 'https://cdn.amcharts.com/lib/4/core.js', array(), null, true);
-    wp_enqueue_script('amcharts-charts', 'https://cdn.amcharts.com/lib/4/charts.js', array(), null, true);
-    wp_enqueue_script('amcharts-animated', 'https://cdn.amcharts.com/lib/4/themes/animated.js', array(), null, true);
-}
-add_action('wp_enqueue_scripts', 'load_amcharts');
 
 // Fetch and cache conversion rate
 function get_conversion_rate($from_currency, $to_currency) {
