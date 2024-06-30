@@ -39,8 +39,14 @@ add_action('wp_enqueue_scripts', 'cc_enqueue_scripts');
 
 // Fetch and cache conversion rate
 function get_conversion_rate($from_currency, $to_currency) {
+    $cache_enabled = get_option('cc_cache_enabled', 'yes');
     $cache_key = 'cc_' . $from_currency . '_' . $to_currency;
-    $rate = get_transient($cache_key);
+
+    if ($cache_enabled === 'yes') {
+        $rate = get_transient($cache_key);
+    } else {
+        $rate = false;
+    }
 
     if ($rate === false) {
         $response = wp_remote_get("https://www.google.com/finance/quote/{$from_currency}-{$to_currency}");
@@ -49,7 +55,9 @@ function get_conversion_rate($from_currency, $to_currency) {
             preg_match('/<div class="YMlKec fxKbKc">([0-9.]+)</', $body, $matches);
             if (isset($matches[1])) {
                 $rate = floatval($matches[1]);
-                set_transient($cache_key, $rate, 12 * HOUR_IN_SECONDS); // Cache for 12 hours
+                if ($cache_enabled === 'yes') {
+                    set_transient($cache_key, $rate, 12 * HOUR_IN_SECONDS); // Cache for 12 hours
+                }
             }
         }
     }
@@ -122,12 +130,20 @@ add_action('wp_ajax_nopriv_cc_convert_currency', 'cc_convert_currency');
 
 // Add available currencies (example: dynamic dropdown)
 function cc_get_currency_names() {
+    $cache_enabled = get_option('cc_cache_enabled', 'yes');
     $cache_key = 'cc_currency_names';
-    $currency_names = get_transient($cache_key);
+
+    if ($cache_enabled === 'yes') {
+        $currency_names = get_transient($cache_key);
+    } else {
+        $currency_names = false;
+    }
 
     if ($currency_names === false) {
         $currency_names = get_currency_names(); // Assuming this function returns an array of currency names
-        set_transient($cache_key, $currency_names, 31536000); // Cache for 1 year (31536000 seconds)
+        if ($cache_enabled === 'yes') {
+            set_transient($cache_key, $currency_names, 31536000); // Cache for 1 year (31536000 seconds)
+        }
     }
 
     return $currency_names;
@@ -152,6 +168,16 @@ function cc_register_shortcodes_menu() {
         20
     );
 
+    // Add Cache Settings submenu
+    add_submenu_page(
+        'cc-shortcodes',
+        'Cache Settings',
+        'Cache Settings',
+        'manage_options',
+        'cc-cache-settings',
+        'cc_cache_settings_page'
+    );
+
     // Add Clear Cache submenu
     add_submenu_page(
         'cc-shortcodes',
@@ -162,6 +188,15 @@ function cc_register_shortcodes_menu() {
         'cc_clear_cache_page'
     );
 
+    // Add Table Cache Settings submenu
+    add_submenu_page(
+        'cc-shortcodes',
+        'Table Cache Settings',
+        'Table Cache Settings',
+        'manage_options',
+        'cc-table-cache-settings',
+        'cc_table_cache_settings_page'
+    );
 }
 add_action('admin_menu', 'cc_register_shortcodes_menu');
 
@@ -175,6 +210,60 @@ function cc_display_shortcodes_page() {
         <code>[currency_table]</code>
         <code>[historical_currency_graph from="USD" to="INR" period="3M"]</code>
         <code>[specific_currency_table]</code>
+    </div>
+    <?php
+}
+
+function cc_cache_settings_page() {
+    if (isset($_POST['cc_cache_enabled'])) {
+        update_option('cc_cache_enabled', $_POST['cc_cache_enabled']);
+        echo '<div class="updated"><p>Cache settings saved.</p></div>';
+    }
+    $cache_enabled = get_option('cc_cache_enabled', 'yes');
+    ?>
+    <div class="wrap">
+        <h1>Cache Settings</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Enable Cache</th>
+                    <td>
+                        <input type="radio" name="cc_cache_enabled" value="yes" <?php checked('yes', $cache_enabled); ?>> Yes
+                        <input type="radio" name="cc_cache_enabled" value="no" <?php checked('no', $cache_enabled); ?>> No
+                    </td>
+                </tr>
+            </table>
+            <p class="submit">
+                <input type="submit" class="button-primary" value="Save Changes">
+            </p>
+        </form>
+    </div>
+    <?php
+}
+
+function cc_table_cache_settings_page() {
+    if (isset($_POST['cc_table_cache_enabled'])) {
+        update_option('cc_table_cache_enabled', $_POST['cc_table_cache_enabled']);
+        echo '<div class="updated"><p>Table Cache settings saved.</p></div>';
+    }
+    $table_cache_enabled = get_option('cc_table_cache_enabled', 'yes');
+    ?>
+    <div class="wrap">
+        <h1>Table Cache Settings</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Enable Table Cache</th>
+                    <td>
+                        <input type="radio" name="cc_table_cache_enabled" value="yes" <?php checked('yes', $table_cache_enabled); ?>> Yes
+                        <input type="radio" name="cc_table_cache_enabled" value="no" <?php checked('no', $table_cache_enabled); ?>> No
+                    </td>
+                </tr>
+            </table>
+            <p class="submit">
+                <input type="submit" class="button-primary" value="Save Changes">
+            </p>
+        </form>
     </div>
     <?php
 }
@@ -210,4 +299,3 @@ function cc_clear_cache() {
 }
 
 add_action('wp_ajax_cc_clear_cache', 'cc_clear_cache');
-?>

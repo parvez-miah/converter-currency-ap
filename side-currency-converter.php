@@ -1,5 +1,4 @@
 <?php
-
 function cc_currency_converter($atts) {
     $atts = shortcode_atts(array(
         'from' => 'USD',
@@ -23,9 +22,14 @@ function cc_currency_converter($atts) {
 
     // Define transient key for caching
     $transient_key = 'cc_currency_converter_' . $atts['from'] . '_' . $atts['to'];
+    $table_cache_enabled = get_option('cc_table_cache_enabled', 'yes');
 
     // Attempt to fetch cached HTML
-    $cached_html = get_transient($transient_key);
+    if ($table_cache_enabled === 'yes') {
+        $cached_html = get_transient($transient_key);
+    } else {
+        $cached_html = false;
+    }
 
     if ($cached_html === false) {
         // Start output buffering
@@ -47,6 +51,8 @@ function cc_currency_converter($atts) {
                                 <?php cc_currency_options($atts['from']); ?>
                             </select>
                         </div>
+                       
+                    </div>
                         <div class="cc-column">
                             <label for="cc-to-currency">To</label>
                             <select id="cc-to-currency">
@@ -54,9 +60,7 @@ function cc_currency_converter($atts) {
                             </select>
                         </div>
                     </div>
-                    <div class="cc-column">
-                        <button id="cc-reverse">⇄</button>
-                    </div>
+                   
                     <div class="cc-column">
                         <label for="cc-preview-rate">ব্যাংক রেট অ্যাডজাস্ট করুন</label>
                         <select id="cc-preview-rate">
@@ -71,7 +75,7 @@ function cc_currency_converter($atts) {
                 </div>
                 <div class="rate-print-button" style="display: flex; align-items: center">
                     <button id="cc-convert" style="margin-right: 7px;">🔄রেট দেখুন</button>
-                    <button id="cc-print">🖶 প্রিন্ট করুন</button>
+                    <!-- <button id="cc-print">🖶 প্রিন্ট করুন</button> -->
                 </div>
             </div>
             
@@ -126,8 +130,10 @@ function cc_currency_converter($atts) {
         // Get the buffered content and clean the buffer
         $cached_html = ob_get_clean();
 
-        // Cache the HTML for a year
-        set_transient($transient_key, $cached_html, 31536000);
+        if ($table_cache_enabled === 'yes') {
+            // Cache the HTML for a year
+            set_transient($transient_key, $cached_html, 31536000);
+        }
     }
 
     return $cached_html;
