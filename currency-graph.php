@@ -1,8 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-// Include the currency names file
+
 // Include the currency names file
 require_once plugin_dir_path(__FILE__) . 'currency-names.php';
 

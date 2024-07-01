@@ -1,4 +1,5 @@
 <?php
+
 /*
 Plugin Name: Ajker Takar Rate
 Description: A simple currency converter that fetches data from Google Finance and caches it.
