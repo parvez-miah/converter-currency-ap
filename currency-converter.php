@@ -3,7 +3,7 @@
 /*
 Plugin Name: Ajker Takar Rate
 Description: A simple currency converter that fetches data from Google Finance and caches it.
-Version: 1.0.2
+Version: 1.0.3
 Author: Ajker Takar Rate
 */
 
