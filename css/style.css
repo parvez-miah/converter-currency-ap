@@ -224,6 +224,10 @@ label {
   font-size: 16px;
 }
 
+#toCurrency {
+  margin-left: 20px;
+}
+
 /* Table and Pagination Part END */
 
 @media only screen and (max-width: 600px) {
@@ -233,6 +237,9 @@ label {
   }
 
   #cc-from-currency {
+    margin-left: 0px;
+  }
+  #toCurrency {
     margin-left: 0px;
   }
 
