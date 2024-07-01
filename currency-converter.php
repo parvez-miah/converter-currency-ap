@@ -197,6 +197,26 @@ function cc_register_shortcodes_menu() {
         'cc-table-cache-settings',
         'cc_table_cache_settings_page'
     );
+
+    // Add Graph Cache Settings submenu
+    add_submenu_page(
+        'cc-shortcodes',
+        'Graph Cache Settings',
+        'Graph Cache Settings',
+        'manage_options',
+        'cc-graph-cache-settings',
+        'cc_graph_cache_settings_page'
+    );
+
+    // Add Clear Graph Cache submenu
+    add_submenu_page(
+        'cc-shortcodes',
+        'Clear Graph Cache',
+        'Clear Graph Cache',
+        'manage_options',
+        'cc-clear-graph-cache',
+        'cc_clear_graph_cache_page'
+    );
 }
 add_action('admin_menu', 'cc_register_shortcodes_menu');
 
@@ -208,15 +228,14 @@ function cc_display_shortcodes_page() {
         <code>[currency_converter]</code>
         <code>[currency_converter from="BDT" to="USD"]</code>
         <code>[currency_table]</code>
-        <code>[historical_currency_graph from="USD" to="INR" period="3M"]</code>
-        <code>[specific_currency_table]</code>
+        <code>[historical_currency_graph from="USD" to="EUR" period="1M"]</code>
     </div>
     <?php
 }
 
 function cc_cache_settings_page() {
     if (isset($_POST['cc_cache_enabled'])) {
-        update_option('cc_cache_enabled', $_POST['cc_cache_enabled']);
+        update_option('cc_cache_enabled', sanitize_text_field($_POST['cc_cache_enabled']));
         echo '<div class="updated"><p>Cache settings saved.</p></div>';
     }
     $cache_enabled = get_option('cc_cache_enabled', 'yes');
@@ -230,33 +249,6 @@ function cc_cache_settings_page() {
                     <td>
                         <input type="radio" name="cc_cache_enabled" value="yes" <?php checked('yes', $cache_enabled); ?>> Yes
                         <input type="radio" name="cc_cache_enabled" value="no" <?php checked('no', $cache_enabled); ?>> No
-                    </td>
-                </tr>
-            </table>
-            <p class="submit">
-                <input type="submit" class="button-primary" value="Save Changes">
-            </p>
-        </form>
-    </div>
-    <?php
-}
-
-function cc_table_cache_settings_page() {
-    if (isset($_POST['cc_table_cache_enabled'])) {
-        update_option('cc_table_cache_enabled', $_POST['cc_table_cache_enabled']);
-        echo '<div class="updated"><p>Table Cache settings saved.</p></div>';
-    }
-    $table_cache_enabled = get_option('cc_table_cache_enabled', 'yes');
-    ?>
-    <div class="wrap">
-        <h1>Table Cache Settings</h1>
-        <form method="post">
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">Enable Table Cache</th>
-                    <td>
-                        <input type="radio" name="cc_table_cache_enabled" value="yes" <?php checked('yes', $table_cache_enabled); ?>> Yes
-                        <input type="radio" name="cc_table_cache_enabled" value="no" <?php checked('no', $table_cache_enabled); ?>> No
                     </td>
                 </tr>
             </table>
@@ -291,11 +283,93 @@ function cc_clear_cache_page() {
     <?php
 }
 
-function cc_clear_cache() {
-    global $wpdb;
-    $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_cc_%'");
-    $wpdb->query("DELETE FROM $wpdb->options WHERE option_name LIKE '_transient_timeout_cc_%'");
-    wp_send_json_success();
+function cc_table_cache_settings_page() {
+    if (isset($_POST['cc_table_cache_enabled'])) {
+        update_option('cc_table_cache_enabled', sanitize_text_field($_POST['cc_table_cache_enabled']));
+        echo '<div class="updated"><p>Table cache settings saved.</p></div>';
+    }
+    $table_cache_enabled = get_option('cc_table_cache_enabled', 'yes');
+    ?>
+    <div class="wrap">
+        <h1>Table Cache Settings</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Enable Table Cache</th>
+                    <td>
+                        <input type="radio" name="cc_table_cache_enabled" value="yes" <?php checked('yes', $table_cache_enabled); ?>> Yes
+                        <input type="radio" name="cc_table_cache_enabled" value="no" <?php checked('no', $table_cache_enabled); ?>> No
+                    </td>
+                </tr>
+            </table>
+            <p class="submit">
+                <input type="submit" class="button-primary" value="Save Changes">
+            </p>
+        </form>
+    </div>
+    <?php
 }
 
+function cc_graph_cache_settings_page() {
+    if (isset($_POST['cc_graph_cache_enabled'])) {
+        update_option('cc_graph_cache_enabled', sanitize_text_field($_POST['cc_graph_cache_enabled']));
+        echo '<div class="updated"><p>Graph cache settings saved.</p></div>';
+    }
+    $graph_cache_enabled = get_option('cc_graph_cache_enabled', 'yes');
+    ?>
+    <div class="wrap">
+        <h1>Graph Cache Settings</h1>
+        <form method="post">
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">Enable Graph Cache</th>
+                    <td>
+                        <input type="radio" name="cc_graph_cache_enabled" value="yes" <?php checked('yes', $graph_cache_enabled); ?>> Yes
+                        <input type="radio" name="cc_graph_cache_enabled" value="no" <?php checked('no', $graph_cache_enabled); ?>> No
+                    </td>
+                </tr>
+            </table>
+            <p class="submit">
+                <input type="submit" class="button-primary" value="Save Changes">
+            </p>
+        </form>
+    </div>
+    <?php
+}
+
+function cc_clear_graph_cache_page() {
+    ?>
+    <div class="wrap">
+        <h1>Clear Graph Cache</h1>
+        <p>Click the button below to clear the cache for the currency graph:</p>
+        <button id="cc-clear-graph-cache-button" class="button button-primary">Clear Graph Cache</button>
+    </div>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $('#cc-clear-graph-cache-button').on('click', function() {
+            $.post(ajaxurl, { action: 'cc_clear_graph_cache' }, function(response) {
+                if (response.success) {
+                    alert('Graph cache cleared successfully!');
+                } else {
+                    alert('Failed to clear graph cache.');
+                }
+            });
+        });
+    });
+    </script>
+    <?php
+}
+
+function cc_clear_cache() {
+    global $wpdb;
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%_transient_%'");
+    wp_send_json_success();
+}
 add_action('wp_ajax_cc_clear_cache', 'cc_clear_cache');
+
+function cc_clear_graph_cache() {
+    global $wpdb;
+    $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%_transient_currency_data_%'");
+    wp_send_json_success();
+}
+add_action('wp_ajax_cc_clear_graph_cache', 'cc_clear_graph_cache');

@@ -120,47 +120,51 @@ function historical_currency_graph($atts) {
 
                 // Fetch and update the chart data
                 const fetchCurrencyData = async (from, to, period) => {
-                    let cacheKey = `currency_data_${from}_${to}_${period}`;
-                    let cachedData = <?php echo json_encode(get_transient('currency_data_' . $atts['from'] . '_' . $atts['to'] . '_' . $atts['period'])); ?>;
+    let cacheEnabled = "<?php echo get_option('cc_graph_cache_enabled', 'yes'); ?>";
+    let cacheKey = `currency_data_${from}_${to}_${period}`;
+    let cachedData = <?php echo json_encode(get_transient('currency_data_' . $atts['from'] . '_' . $atts['to'] . '_' . $atts['period'])); ?>;
 
-                    if (cachedData) {
-                        chart.data = JSON.parse(cachedData);
-                        return;
-                    }
+    if (cacheEnabled === 'yes' && cachedData) {
+        chart.data = JSON.parse(cachedData);
+        return;
+    }
 
-                    let endDate = new Date();
-                    let startDate = new Date();
-                    
-                    switch (period) {
-                        case '1M':
-                            startDate.setMonth(startDate.getMonth() - 1);
-                            break;
-                        case '3M':
-                            startDate.setMonth(startDate.getMonth() - 3);
-                            break;
-                        case '6M':
-                            startDate.setMonth(startDate.getMonth() - 6);
-                            break;
-                        case '1Y':
-                            startDate.setFullYear(startDate.getFullYear() - 1);
-                            break;
-                    }
+    let endDate = new Date();
+    let startDate = new Date();
 
-                    let start = startDate.toISOString().split('T')[0];
-                    let end = endDate.toISOString().split('T')[0];
+    switch (period) {
+        case '1M':
+            startDate.setMonth(startDate.getMonth() - 1);
+            break;
+        case '3M':
+            startDate.setMonth(startDate.getMonth() - 3);
+            break;
+        case '6M':
+            startDate.setMonth(startDate.getMonth() - 6);
+            break;
+        case '1Y':
+            startDate.setFullYear(startDate.getFullYear() - 1);
+            break;
+    }
 
-                    let response = await fetch(`https://currencies.apps.grandtrunk.net/getrange/${start}/${end}/${from}/${to}`);
-                    let data = await response.text();
-                    let lines = data.split('\n');
-                    let chartData = lines.map(line => {
-                        let [date, value] = line.split(' ');
-                        let floatVal = parseFloat(value);
-                        return { date: new Date(date), value: floatVal, adjustedRate: (floatVal * 1.02).toFixed(4) };
-                    }).filter(item => !isNaN(item.value));
+    let start = startDate.toISOString().split('T')[0];
+    let end = endDate.toISOString().split('T')[0];
 
-                    chart.data = chartData.reverse();
-                    setTransient(cacheKey, JSON.stringify(chartData.reverse()), 24 * HOUR_IN_SECONDS);
-                };
+    let response = await fetch(`https://currencies.apps.grandtrunk.net/getrange/${start}/${end}/${from}/${to}`);
+    let data = await response.text();
+    let lines = data.split('\n');
+    let chartData = lines.map(line => {
+        let [date, value] = line.split(' ');
+        let floatVal = parseFloat(value);
+        return { date: new Date(date), value: floatVal, adjustedRate: (floatVal * 1.02).toFixed(4) };
+    }).filter(item => !isNaN(item.value));
+
+    chart.data = chartData.reverse();
+    if (cacheEnabled === 'yes') {
+        setTransient(cacheKey, JSON.stringify(chartData.reverse()), 24 * HOUR_IN_SECONDS);
+    }
+};
+
 
                 // Initial fetch
                 fetchCurrencyData("<?php echo esc_js($atts['from']); ?>", "<?php echo esc_js($atts['to']); ?>", "<?php echo esc_js($atts['period']); ?>");
