@@ -15,9 +15,9 @@ function render_specific_currency_table() {
     <p id="specificNoResults" class="no-results" style="display:none;">দেশের নাম সঠিকভাবে লিখুন। এই নামে কোন ডাটা পাওয়া যায়নি..</p>
     <div id="specificLoader" style="display: none; color:green; text-align: center; margin-bottom: 10px">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
     <div id="specificPagination" class="pagination">
-        <button id="specificPrevPage" class="pagination-button" disabled> ◀️পূর্ববর্তী টাকার রেট</button>
+        <button id="specificPrevPage" class="pagination-button" disabled>পূর্ববর্তী</button>
         <span id="specificPageIndicator">Page 1</span>
-        <button id="specificNextPage" class="pagination-button">পরবর্তী টাকার রেট▶️ </button>
+        <button id="specificNextPage" class="pagination-button">পরবর্তী</button>
     </div>
     <script src="' . plugin_dir_url(__FILE__) . 'js/specific-currency-table.min.js" defer></script>';
     return $html;

@@ -2,7 +2,7 @@
 /*
 Plugin Name: Ajker Takar Rate
 Description: A simple currency converter that fetches data from Google Finance and caches it.
-Version: 12.0.2
+Version: 1.0.2
 Author: Ajker Takar Rate
 */
 
@@ -26,9 +26,6 @@ function cc_enqueue_scripts() {
 
     // Enqueue CDN versions of jQuery and amCharts
     wp_enqueue_script('jquery-cdn', 'https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js', array(), null, true);
-    wp_enqueue_script('amcharts-core', 'https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/core.js', array(), null, true);
-    wp_enqueue_script('amcharts-charts', 'https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/charts.js', array(), null, true);
-    wp_enqueue_script('amcharts-animated', 'https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/themes/animated.js', array(), null, true);
 
     wp_enqueue_script('cc-scripts-main', plugins_url('js/script.js', __FILE__), array('jquery-cdn'), null, true);
     wp_enqueue_script('cc-currency-table', plugins_url('js/currency-table.js', __FILE__), array('jquery-cdn'), null, true);

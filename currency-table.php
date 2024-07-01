@@ -40,9 +40,9 @@ function render_currency_table() {
     <p id="noResults" class="no-results" style="display:none;">দেশের নাম সঠিকভাবে লিখুন। এই নামে কোন ডাটা পাওয়া যায়নি..</p>
     <div id="loader" style="display: none; color:green; text-align: center; margin-bottom: 10px">⌛লোড নিচ্ছে..... অপেক্ষা করুন!</div>
     <div id="pagination" class="pagination">
-        <button id="prevPage" class="pagination-button" disabled> ◀️পূর্ববর্তী টাকার রেট</button>
+        <button id="prevPage" class="pagination-button" disabled>পূর্ববর্তী</button>
         <span id="pageIndicator">Page 1</span>
-        <button id="nextPage" class="pagination-button">পরবর্তী টাকার রেট▶️ </button>
+        <button id="nextPage" class="pagination-button">পরবর্তী</button>
     </div>
     <script src="' . plugin_dir_url(__FILE__) . 'js/currency-table.js" defer></script>';
     return $html;
