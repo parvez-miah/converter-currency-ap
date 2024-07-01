@@ -41,16 +41,16 @@ function cc_currency_converter($atts) {
     <!-- Navigation Bar -->
     <div class="graph-navbar-elements">
         <div class="navbar-sub-div">
-            <img src="https://ajkertakarrate.com/wp-content/uploads/2024/07/money-exchange_11zon.png" alt="">
+            <img style="margin-top: 12px" src="https://ajkertakarrate.com/wp-content/uploads/2024/07/money-exchange_11zon.png" alt="">
         <a href="#convert">কনভার্টার</a>
         </div>
         <div class="navbar-sub-div">
-            <img src="https://ajkertakarrate.com/wp-content/uploads/2024/07/exchange-rate_11zon.png" alt="">
+            <img style="margin-top: 11px" src="https://ajkertakarrate.com/wp-content/uploads/2024/07/exchange-rate_11zon.png" alt="">
         <a href="https://ajkertakarrate.com/%e0%a6%9f%e0%a6%be%e0%a6%95%e0%a6%be%e0%a6%b0-%e0%a6%b0%e0%a7%87%e0%a6%9f-%e0%a6%90%e0%a6%a4%e0%a6%bf%e0%a6%b9%e0%a6%be%e0%a6%b8%e0%a6%bf%e0%a6%95-%e0%a6%97%e0%a7%8d%e0%a6%b0%e0%a6%be%e0%a6%ab/">গ্রাফ</a>
       
         </div>
        <div class="navbar-sub-div">
-        <img src="https://ajkertakarrate.com/wp-content/uploads/2024/07/notification_11zon.png" alt="">
+        <img style="margin-top: 12px" src="https://ajkertakarrate.com/wp-content/uploads/2024/07/notification_11zon.png" alt="">
        <a href="#alerts" title="শীঘ্রই এটা ব্যবহার করতে পারবেন!">নোটিফিকেশন</a>
        </div>
     </div>
