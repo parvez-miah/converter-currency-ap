@@ -244,4 +244,9 @@ label {
   .graph-navbar-elements {
     width: 100%;
   }
+
+  .navbar-sub-div img {
+    margin-top: 9px;
+    margin-left: -4px;
+  }
 }
