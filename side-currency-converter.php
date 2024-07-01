@@ -39,11 +39,20 @@ function cc_currency_converter($atts) {
         <div class="cc-container">
         <div class="full-currency-converter-box">
     <!-- Navigation Bar -->
-    <div class="navbar">
+    <div class="graph-navbar-elements">
+        <div class="navbar-sub-div">
+            <img src="https://ajkertakarrate.com/wp-content/uploads/2024/07/money-exchange_11zon.png" alt="">
         <a href="#convert">কনভার্টার</a>
-        <a href="#send" title="শীঘ্রই এটা ব্যবহার করতে পারবেন!">টাকা প্রেরণ</a>
+        </div>
+        <div class="navbar-sub-div">
+            <img src="https://ajkertakarrate.com/wp-content/uploads/2024/07/exchange-rate_11zon.png" alt="">
         <a href="https://ajkertakarrate.com/%e0%a6%9f%e0%a6%be%e0%a6%95%e0%a6%be%e0%a6%b0-%e0%a6%b0%e0%a7%87%e0%a6%9f-%e0%a6%90%e0%a6%a4%e0%a6%bf%e0%a6%b9%e0%a6%be%e0%a6%b8%e0%a6%bf%e0%a6%95-%e0%a6%97%e0%a7%8d%e0%a6%b0%e0%a6%be%e0%a6%ab/">গ্রাফ</a>
-        <a href="#alerts" title="শীঘ্রই এটা ব্যবহার করতে পারবেন!">নোটিফিকেশন</a>
+      
+        </div>
+       <div class="navbar-sub-div">
+        <img src="https://ajkertakarrate.com/wp-content/uploads/2024/07/notification_11zon.png" alt="">
+       <a href="#alerts" title="শীঘ্রই এটা ব্যবহার করতে পারবেন!">নোটিফিকেশন</a>
+       </div>
     </div>
     <div class="currency-converter-box">
         <!-- Amount Box -->

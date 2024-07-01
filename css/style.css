@@ -19,7 +19,7 @@
   padding-top: 50px;
 }
 
-.navbar {
+.graph-navbar-elements {
   position: absolute;
   top: 0;
   left: 50%;
@@ -33,15 +33,26 @@
   border-radius: 5px;
 }
 
-.navbar a {
+.graph-navbar-elements a {
   color: black; /* Change as needed */
   padding: 10px;
   font-size: 16px; /* Adjust as needed */
 }
 
-.navbar a:hover {
-  background-color: #ddd;
+.navbar-sub-div:hover {
+  background-color: #cdcdcd;
   border-radius: 4px;
+  padding: 5px;
+}
+
+.navbar-sub-div {
+  display: flex;
+}
+.navbar-sub-div img {
+  background-color: transparent;
+  width: 25px;
+  height: 25px;
+  margin-top: 7px;
 }
 
 .currency-converter-box {
@@ -225,5 +236,12 @@ label {
     border-radius: 70px;
     font-weight: 900;
     border: 1px solid;
+  }
+  .navbar-sub-div {
+    margin-left: 10px;
+  }
+
+  .graph-navbar-elements {
+    width: 100%;
   }
 }
