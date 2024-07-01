@@ -4,7 +4,7 @@ function cc_currency_converter($atts) {
         'from' => 'USD',
         'to' => 'BDT'
     ), $atts);
-    header("Access-Control-Allow-Origin: *");
+    // header("Access-Control-Allow-Origin: *");
 
     // Get today's date and convert it to Bengali
     $today_date = date('Y-m-d');
@@ -39,7 +39,12 @@ function cc_currency_converter($atts) {
         <div class="cc-container">
         <div class="full-currency-converter-box">
     <!-- Navigation Bar -->
-    
+    <div class="navbar">
+        <a href="#convert">Convert</a>
+        <a href="#send">Send</a>
+        <a href="#charts">Charts</a>
+        <a href="#alerts">Alerts</a>
+    </div>
     <div class="currency-converter-box">
         <!-- Amount Box -->
         <div class="sub-amount-box">
@@ -92,11 +97,12 @@ function cc_currency_converter($atts) {
         <div id="cc-result"></div>
         <div id="cc-increased-rate"></div>
     </div>
+    
 </div>
 
-<div id="historical-graph-container">
+ <!-- <div id="historical-graph-container">
             <?php echo do_shortcode('[historical_currency_graph_only from="' . $atts['from'] . '" to="' . $atts['to'] . '" period="1M"]'); ?>
-            </div>
+            </div>  -->
 
             
             
@@ -134,11 +140,11 @@ function cc_currency_converter($atts) {
             </div>
         </div>
         
-        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" defer crossorigin="anonymous"></script>
+       <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" defer crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/core.js" defer crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/charts.js" defer crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@amcharts/amcharts4/themes/animated.js" defer crossorigin="anonymous"></script>
-        <script src="<?php echo plugin_dir_url(__FILE__); ?>graph-script.js" defer crossorigin="anonymous"></script>
+        <script src="<?php echo plugin_dir_url(__FILE__); ?>graph-script.js" defer crossorigin="anonymous"></script>  -->
         <?php
         // Get the buffered content and clean the buffer
         $cached_html = ob_get_clean();
